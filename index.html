@@ -26,13 +26,10 @@ input,select{width:100%;padding:12px;font-size:16px;border:1px solid var(--bd);b
 .sm{text-align:center;color:var(--mu);font-size:13px}
 input.err{border-color:var(--bad);background:var(--badb);color:var(--bad)}
 input.good{border-color:var(--ok)}
-.home-btn{display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;padding:10px 16px;font-size:15px;font-weight:600;color:#fff;background:var(--ac);border-radius:10px;text-decoration:none}
-.home-btn:hover{opacity:.9}
 </style>
 </head>
 <body>
 <div class="w">
-<a class="home-btn" href="https://gmaphnbf.github.io/HNBFGMAP/">🏠 Home</a>
 <h1>🏍️ HNB Finance</h1>
 
 <div class="c">
@@ -41,6 +38,7 @@ input.good{border-color:var(--ok)}
   <select id="make"></select>
   <label>Model</label>
   <select id="model"></select>
+  <div class="row"><span>NEW INVOICE</span><b id="inv">–</b></div>
   <div class="row"><span>Normal Price</span><b id="price">–</b></div>
   <div class="row"><span>Max LTV (Max Exposure)</span><b id="ltv">–</b></div>
   <div class="box ok" id="mindp">Minimum Down Payment: –</div>
@@ -119,6 +117,8 @@ const MODELS=[
 ["HERO","XTREME",784400,541000,243400],
 ["HERO","HUNK 160R",917400,633000,284400]
 ];
+// NEW INVOICE values, same order as MODELS
+const INV=[1220500,1271900,1459500,1512515.38,1892900,2121500,2176900,2282000,2617900,2927900,1342900,1413900,1502900,1235900,1282000,1112900,1253900,730900,1607900,1712900,1971900,1502900,1056900,3974900,4038000,2627900,1030900,1281900,1274900,1476900,1386900,1622900];
 // ==================================================================
 const $=id=>document.getElementById(id);
 const f=n=>"Rs. "+(Math.round(n*100)/100).toLocaleString("en-LK",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -134,7 +134,7 @@ function calc(){
   const m=MODELS[$("model").value],price=m[2],maxLoan=m[3];
   const ltv=maxLoan/price*100;
   const minDp=m[4];
-  $("price").textContent=f(price);$("ltv").textContent=f(maxLoan);
+  $("price").textContent=f(price);$("inv").textContent=f(INV[$("model").value]);$("ltv").textContent=f(maxLoan);
   $("mindp").textContent="Minimum Down Payment: "+f(minDp);
   const dpEmpty=$("dp").value==="";
   const dp=v("dp");
