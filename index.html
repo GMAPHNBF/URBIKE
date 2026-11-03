@@ -26,11 +26,32 @@ input,select{width:100%;padding:12px;font-size:16px;border:1px solid var(--bd);b
 .sm{text-align:center;color:var(--mu);font-size:13px}
 input.err{border-color:var(--bad);background:var(--badb);color:var(--bad)}
 input.good{border-color:var(--ok)}
+.top{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0;margin-bottom:6px}
+.top h1{margin:0}
+.mb{font-size:24px;line-height:1;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;width:44px;height:44px}
+.menu{display:none;position:absolute;right:0;top:54px;background:var(--card);border:1px solid var(--bd);border-radius:12px;min-width:210px;box-shadow:0 8px 24px rgba(0,0,0,.25);overflow:hidden}
+.menu.open{display:block}
+.menu button{display:block;width:100%;text-align:left;padding:15px 16px;font-size:16px;background:none;border:0;border-bottom:1px solid var(--bd);color:var(--tx)}
+.btn{width:100%;padding:13px;font-size:16px;font-weight:600;border:0;border-radius:10px;background:var(--ac);color:#fff}
+.btn.sec{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+.bar{display:none}
+@media(max-width:640px){.w{padding-bottom:96px}.bar{display:flex;align-items:center;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--bd);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}.bar .t{flex:1;min-width:0}.bar .t small{display:block;color:var(--mu);font-size:12px}.bar .t b{font-size:18px;color:var(--ac)}.bar .btn{width:auto;padding:12px 18px}}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:center;justify-content:center;padding:16px}
+.ov.open{display:flex}.md{width:100%;max-width:420px;margin:0}.md h2{margin:0 0 4px;font-size:18px}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div class="w">
-<h1>🏍️ HNB Finance</h1>
+<div class="top" style="position:sticky">
+  <h1>🏍️ HNB Finance</h1>
+  <button class="mb" id="mb" aria-label="Menu">☰</button>
+  <div class="menu" id="menu">
+    <button id="m-pdf">📄 Save as PDF</button>
+    <button id="m-theme">🌓 Dark / Light</button>
+    <button id="m-reset">🔄 Reset</button>
+  </div>
+</div>
 
 <div class="c">
   <div class="ck"><input type="checkbox" id="bn" checked><label for="bn" style="margin:0;color:inherit">Brand New Bike</label></div>
@@ -49,12 +70,13 @@ input.good{border-color:var(--ok)}
 </div>
 
 <div class="c">
-  <div class="ck"><input type="checkbox" id="pro"><label for="pro" style="margin:0;color:inherit">Pro. Offer</label></div>
+  <div class="ck"><input type="checkbox" id="pro" checked><label for="pro" style="margin:0;color:inherit">Pro. Offer</label></div>
   <div class="r"><div><label>Pro. Offer Amount</label><input type="number" inputmode="decimal" id="proa" value="6000"></div></div>
-  <div class="ck"><input type="checkbox" id="rmv"><label for="rmv" style="margin:0;color:inherit">RMV (add once, with first installment)</label></div>
+  <div class="ck"><input type="checkbox" id="rmv"><label for="rmv" style="margin:0;color:inherit">RMV</label></div>
   <label>RMV Amount</label><input type="number" inputmode="decimal" id="rmva" value="0">
-  <label>Insurance Amount</label><input type="number" inputmode="decimal" id="ins" value="0">
-  <label>Introducer Commission</label><input type="number" inputmode="decimal" id="intr" value="0">
+  <label>Insurance Amount *</label><input type="number" inputmode="decimal" id="ins" placeholder="Required">
+  <div class="box bad" id="insmsg" style="display:none;margin-top:6px">Insurance Amount is required</div>
+  <label>Introducer Commission (Max Rs. 50,000.00)</label><input type="number" inputmode="decimal" id="intr" value="0" min="0" max="50000">
 </div>
 
 <div class="c">
@@ -80,6 +102,16 @@ input.good{border-color:var(--ok)}
 </div>
 
 </div>
+
+<div class="bar"><div class="t"><small>Monthly Installment</small><b id="bi">–</b></div><button class="btn" id="b-pdf">📄 Save PDF</button></div>
+
+<div class="ov" id="ov"><div class="c md">
+  <h2>Save as PDF</h2>
+  <label>Customer Name *</label><input type="text" id="cn" autocomplete="name">
+  <label>NIC *</label><input type="text" id="cnic" maxlength="12" autocapitalize="characters" placeholder="e.g. 199012345678 or 901234567V">
+  <div class="box bad" id="cerr" style="display:none"></div>
+  <div class="r" style="margin-top:14px"><div><button class="btn sec" id="cx">Cancel</button></div><div><button class="btn" id="cs">Save PDF</button></div></div>
+</div></div>
 
 <script>
 // ===== [make, model, normal price, max exposure (max loan), min down payment] =====
@@ -128,8 +160,8 @@ function fillModels(){const s=$("model");s.innerHTML="";MODELS.forEach((m,i)=>{i
 fillModels();
 $("make").addEventListener("input",fillModels);
 $("yr").add(new Option("Select",""));$("mo").add(new Option("Select",""));
-for(let y=0;y<=7;y++)$("yr").add(new Option(y+" yr",y));
-for(let m=0;m<=11;m++)$("mo").add(new Option(m+" mo",m));
+for(let y=1;y<=7;y++)$("yr").add(new Option(y+" yr",y));
+for(let m=1;m<=11;m++)$("mo").add(new Option(m+" mo",m));
 function calc(){
   const m=MODELS[$("model").value],price=m[2],maxLoan=m[3];
   const ltv=maxLoan/price*100;
@@ -146,7 +178,11 @@ function calc(){
   const base=Math.max(price-dp,0);
   const pro=$("pro").checked?v("proa"):0;
   const rmv=$("rmv").checked?v("rmva"):0;
+  if(v("intr")>50000)$("intr").value=50000;
+  if(v("intr")<0)$("intr").value=0;
   const ins=v("ins"),intr=v("intr");
+  const insMiss=!(ins>0);
+  $("insmsg").style.display=insMiss?"block":"none";
   const L=base+pro+ins+intr+rmv;
   $("r1").textContent=f(base);$("r2").textContent=f(pro);$("r3").textContent=f(ins);
   $("r4").textContent=f(intr);$("r5").textContent=f(rmv);$("la").textContent=f(L);
@@ -156,11 +192,62 @@ function calc(){
   if(n>0&&L>0){
     const i=rate/12;pay=i===0?L/n:L*i/(1-Math.pow(1+i,-n));
   }
-  $("inst").textContent=n>0?f(pay):"Select tenure";
+  $("inst").textContent=insMiss?"Enter Insurance Amount":n>0?f(pay):"Select tenure";
+  $("bi").textContent=$("inst").textContent;
+  window.R={m,price,inv:INV[$("model").value],bn:$("bn").checked,dp,base,pro,ins,intr,rmv,L,rate:v("rate"),yr:v("yr"),mo:v("mo"),n,pay,insMiss};
   $("tot").textContent=n>0&&L>0?n+" months × "+f(pay)+" = "+f(pay*n):"";
 }
 document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",calc));
 calc();
+
+// ===== Menu =====
+const closeMenu=()=>$("menu").classList.remove("open");
+$("mb").onclick=e=>{e.stopPropagation();$("menu").classList.toggle("open")};
+document.addEventListener("click",e=>{if(!$("menu").contains(e.target))closeMenu()});
+$("m-theme").onclick=()=>{closeMenu();const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
+$("m-reset").onclick=()=>{closeMenu();if(confirm("Reset all fields?"))location.reload()};
+
+// ===== Save as PDF =====
+function openSave(){
+  closeMenu();calc();const R=window.R;
+  if(R.insMiss){alert("Please enter the Insurance Amount.");$("ins").focus();return}
+  if(R.n<=0){alert("Please select the tenure.");return}
+  $("cerr").style.display="none";$("ov").classList.add("open");$("cn").focus();
+}
+$("m-pdf").onclick=openSave;$("b-pdf").onclick=openSave;
+$("cx").onclick=()=>$("ov").classList.remove("open");
+$("cs").onclick=()=>{
+  const name=$("cn").value.trim(),nic=$("cnic").value.trim().toUpperCase(),er=$("cerr");
+  let msg="";
+  if(!name)msg="Customer Name is required";
+  else if(!/^(\d{9}[VX]|\d{12})$/.test(nic))msg="Enter a valid NIC (12 digits, or 9 digits + V/X)";
+  if(msg){er.textContent=msg;er.style.display="block";return}
+  if(!window.jspdf){er.textContent="PDF library could not load. Check your internet connection and try again.";er.style.display="block";return}
+  makePDF(name,nic);$("ov").classList.remove("open");
+};
+function makePDF(name,nic){
+  const R=window.R,d=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+  const L=18,E=192;let y=20;
+  d.setFont("helvetica","bold");d.setFontSize(18);d.text("HNB Finance - Leasing Quotation",L,y);y+=7;
+  d.setFont("helvetica","normal");d.setFontSize(10);d.text("Date: "+new Date().toLocaleDateString("en-GB"),L,y);y+=10;
+  const sec=t=>{d.setFont("helvetica","bold");d.setFontSize(12);d.text(t,L,y);y+=2;d.line(L,y,E,y);y+=7;d.setFont("helvetica","normal");d.setFontSize(11)};
+  const row=(a,b,bold)=>{d.setFont("helvetica",bold?"bold":"normal");d.text(a,L,y);d.text(String(b),E,y,{align:"right"});y+=7};
+  sec("Customer");row("Customer Name",name);row("NIC",nic);y+=4;
+  sec("Vehicle");row("Make",R.m[0]);row("Model",R.m[1]);row("Condition",R.bn?"Brand New":"Used");
+  row("New Invoice",f(R.inv));row("Normal Price",f(R.price));y+=4;
+  sec("Leasing Details");
+  row("Down Payment",f(R.dp));row("Price - Down Payment",f(R.base));
+  if(R.pro)row("+ Pro. Offer",f(R.pro));
+  row("+ Insurance",f(R.ins));row("+ Introducer Commission",f(R.intr));
+  if(R.rmv)row("+ RMV",f(R.rmv));
+  row("Leasing Amount",f(R.L),true);y+=4;
+  sec("Installment");
+  row("Rate (per year)",R.rate+"%");
+  row("Tenure",(R.yr?R.yr+" yr ":"")+(R.mo?R.mo+" mo":"")+" ("+R.n+" months)");
+  row("Monthly Installment",f(R.pay),true);
+  row("Total Payable",f(R.pay*R.n));
+  d.save((name+"_"+nic).replace(/[^A-Za-z0-9]+/g,"_")+".pdf");
+}
 </script>
 </body>
 </html>
