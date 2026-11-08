@@ -267,7 +267,7 @@ function calc(){
   const pro=$("pro").checked?v("proa"):0;
   const rmv=$("rmv").checked?v("rmva"):0;
   const maxIntr=Math.floor(INV[$("model").value]*0.04*100)/100;
-  $("intrl").textContent="Introducer Commission (Max 4% of New Invoice = "+f(maxIntr)+")";
+  $("intrl").textContent="Introducer Commission (4% of New Invoice = "+f(maxIntr)+" [Max]  |  3% = "+f(Math.floor(INV[$("model").value]*0.03*100)/100)+")";
   $("intr").max=maxIntr;
   const im=$("intrmsg");
   if(v("intr")>maxIntr){$("intr").value=maxIntr;im.textContent="Introducer Commission limited to 4% of New Invoice ("+f(maxIntr)+")";im.style.display="block"}
