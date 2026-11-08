@@ -1,125 +1,626 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HNB Finance</title>
-<style>
-:root{--bg:#f4f5f7;--card:#fff;--tx:#14171a;--mu:#5d6570;--bd:#d9dde3;--ac:#1f5fd1;--ok:#13794a;--okb:#e3f6ec;--bad:#c0262d;--badb:#fde8e9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#101215;--card:#1a1d22;--tx:#eceef1;--mu:#9aa3ae;--bd:#2f353d;--ac:#6ea0ff;--ok:#4cd18b;--okb:#12301f;--bad:#ff7076;--badb:#3a1618}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#101215;--card:#1a1d22;--tx:#eceef1;--mu:#9aa3ae;--bd:#2f353d;--ac:#6ea0ff;--ok:#4cd18b;--okb:#12301f;--bad:#ff7076;--badb:#3a1618}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px}
-.w{max-width:520px;margin:0 auto;padding:14px}
-h1{font-size:20px;margin:6px 0 12px}
-.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
-label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
-input,select{width:100%;padding:12px;font-size:16px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
-.r{display:flex;gap:8px}.r>div{flex:1}
-.ck{display:flex;align-items:center;gap:10px;margin:10px 0 0;font-size:15px}
-.ck input{width:22px;height:22px;flex:none}
-.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--bd);font-size:15px}
-.row b{font-variant-numeric:tabular-nums}
-.box{border-radius:10px;padding:10px 12px;margin-top:8px;font-size:15px}
-.ok{background:var(--okb);color:var(--ok)}.bad{background:var(--badb);color:var(--bad)}
-.big{font-size:26px;font-weight:700;color:var(--ac);text-align:center;margin:6px 0}
-.sm{text-align:center;color:var(--mu);font-size:13px}
-input.err{border-color:var(--bad);background:var(--badb);color:var(--bad)}
-input.good{border-color:var(--ok)}
-.top{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0;margin-bottom:6px}
-.top h1{margin:0}
-.mb{font-size:24px;line-height:1;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;width:44px;height:44px}
-.menu{display:none;position:absolute;right:0;top:54px;background:var(--card);border:1px solid var(--bd);border-radius:12px;min-width:210px;box-shadow:0 8px 24px rgba(0,0,0,.25);overflow:hidden}
-.menu.open{display:block}
-.menu button{display:block;width:100%;text-align:left;padding:15px 16px;font-size:16px;background:none;border:0;border-bottom:1px solid var(--bd);color:var(--tx)}
-.btn{width:100%;padding:13px;font-size:16px;font-weight:600;border:0;border-radius:10px;background:var(--ac);color:#fff}
-.btn.sec{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
-.bar{display:none}
-@media(max-width:640px){.w{padding-bottom:96px}.bar{display:flex;align-items:center;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--bd);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}.bar .t{flex:1;min-width:0}.bar .t small{display:block;color:var(--mu);font-size:12px}.bar .t b{font-size:18px;color:var(--ac)}.bar .btn{width:auto;padding:12px 18px}}
-.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:center;justify-content:center;padding:16px}
-.ov.open{display:flex}.md{width:100%;max-width:420px;margin:0}.md h2{margin:0 0 4px;font-size:18px}
-</style>
+<title>HNB Finance - Premium Leasing Calculator</title>
+
+<!-- Tailwind CSS & Lucide Icons -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body>
-<div class="w">
-<div class="top" style="position:sticky">
-  <h1>🏍️ HNB Finance</h1>
-  <button class="mb" id="mb" aria-label="Menu">☰</button>
-  <div class="menu" id="menu">
-    <button id="m-pdf">📄 Save as PDF</button>
-    <button id="m-theme">🌓 Dark / Light</button>
-    <button id="m-reset">🔄 Reset</button>
-  </div>
-</div>
-
-<div class="c">
-  <div class="ck"><input type="checkbox" id="bn" checked><label for="bn" style="margin:0;color:inherit">Brand New Bike</label></div>
-  <label>Make</label>
-  <select id="make"></select>
-  <label>Model</label>
-  <select id="model"></select>
-  <div class="row"><span>NEW INVOICE</span><b id="inv">–</b></div>
-  <div class="row"><span>Normal Price</span><b id="price">–</b></div>
-  <div class="row"><span>Max LTV (Max Exposure)</span><b id="ltv">–</b></div>
-  <div class="box ok" id="mindp">Minimum Down Payment: –</div>
-
-</div>
-
-<div class="c">
-  <label style="margin-top:0">Down Payment (Rs.)</label>
-  <input type="number" inputmode="decimal" id="dp" placeholder="Enter down payment">
-  <div class="box bad" id="dpmsg" style="display:none"></div>
-</div>
-
-<div class="c">
-  <div class="ck"><input type="checkbox" id="pro" checked><label for="pro" style="margin:0;color:inherit">Pro. Offer</label></div>
-  <div class="r"><div><label>Pro. Offer Amount</label><input type="number" inputmode="decimal" id="proa" value="6000"></div></div>
-  <div class="ck"><input type="checkbox" id="rmv"><label for="rmv" style="margin:0;color:inherit">RMV</label></div>
-  <label>RMV Amount</label><input type="number" inputmode="decimal" id="rmva" value="0">
-  <label>Insurance Amount * <span style="color:var(--ok)">(auto-filled if in price list – otherwise enter manually)</span></label><input type="number" inputmode="decimal" id="ins" placeholder="Required">
-  <div class="box bad" id="insmsg" style="display:none;margin-top:6px">Insurance Amount is required</div>
-  <label id="intrl">Introducer Commission (Max 4% of New Invoice)</label><input type="number" inputmode="decimal" id="intr" value="0" min="0">
-  <div class="box bad" id="intrmsg" style="display:none;margin-top:6px"></div>
-</div>
-
-<div class="c">
-  <div class="r">
-    <div><label>Rate (% per year)</label><input type="number" inputmode="decimal" id="rate" value="23" step="0.01"></div>
-  </div>
-  <div class="box bad" id="ratemsg" style="display:none;margin-top:6px"></div>
-  <div class="r">
-    <div><label>Tenure – Years</label><select id="yr"></select></div>
-    <div><label>Months</label><select id="mo"></select></div>
-  </div>
-</div>
-
-<div class="c">
-  <div class="row"><span>Price − Down Payment</span><b id="r1">–</b></div>
-  <div class="row"><span>+ Pro. Offer</span><b id="r2">–</b></div>
-  <div class="row"><span>+ Insurance</span><b id="r3">–</b></div>
-  <div class="row"><span>+ Introducer Commission</span><b id="r4">–</b></div>
-  <div class="row"><span>+ RMV</span><b id="r5">–</b></div>
-  <div class="row"><span><b>Leasing Amount</b></span><b id="la">–</b></div>
-  <div class="sm" style="margin-top:12px">Monthly Installment</div>
-  <div class="big" id="inst">–</div>
-  <div class="sm" id="tot"></div>
-</div>
-
-</div>
-
-<div class="bar"><div class="t"><small>Monthly Installment</small><b id="bi">–</b></div><button class="btn" id="b-pdf">📄 Save PDF</button></div>
-
-<div class="ov" id="ov"><div class="c md">
-  <h2>Save as PDF</h2>
-  <label>Customer Name *</label><input type="text" id="cn" autocomplete="name">
-  <label>NIC *</label><input type="text" id="cnic" maxlength="12" autocapitalize="characters" placeholder="e.g. 199012345678 or 901234567V">
-  <div class="box bad" id="cerr" style="display:none"></div>
-  <div class="r" style="margin-top:14px"><div><button class="btn sec" id="cx">Cancel</button></div><div><button class="btn" id="cs">Save PDF</button></div></div>
-</div></div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script>
-// ===== [make, model, normal price, max exposure (max loan), min down payment] =====
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            50: '#eef6ff',
+            100: '#e0edff',
+            500: '#2563eb',
+            600: '#1d4ed8',
+            700: '#1e40af',
+            glow: '#3b82f6'
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+  }
+  .dark .glass-card {
+    background: rgba(18, 24, 38, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-input {
+    background: rgba(243, 244, 246, 0.8);
+    border: 1px solid rgba(209, 213, 219, 0.8);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .dark .glass-input {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .glass-input:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  }
+
+  .glow-box-blue {
+    box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.3);
+  }
+  .dark .glow-box-blue {
+    box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.25);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+  .dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
+
+  .nums-tabular { font-variant-numeric: tabular-nums; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 dark:bg-[#0b0f19] dark:text-slate-100 min-h-screen flex flex-col pb-28 lg:pb-8 selection:bg-brand-500 selection:text-white">
+
+<!-- Header / Sticky Mobile-First Navbar -->
+<header class="sticky top-0 z-40 w-full glass-card border-b border-slate-200 dark:border-slate-800/80">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+    
+    <!-- Brand Logo & Main Title -->
+    <div class="flex items-center gap-2.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[2px] shadow-lg shadow-blue-500/20 shrink-0">
+        <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center">
+          <i data-lucide="bike" class="w-5 h-5 text-brand-600 dark:text-cyan-400"></i>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <h1 class="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-slate-900 via-brand-600 to-indigo-600 dark:from-white dark:via-cyan-300 dark:to-brand-400 bg-clip-text text-transparent">
+            HNB Finance
+          </h1>
+          <span class="px-2 py-0.5 text-[9px] font-bold tracking-wide uppercase bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-cyan-400 rounded-full border border-brand-200 dark:border-brand-500/20">
+            Lease Pro
+          </span>
+        </div>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium">Smart Bike Calculator</p>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation Actions -->
+    <div class="hidden md:flex items-center gap-2">
+      <!-- 🏠 Home Link Button -->
+      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" 
+         class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-200/50 dark:bg-slate-800/60 hover:bg-slate-300/60 dark:hover:bg-slate-700/60 transition">
+        <i data-lucide="home" class="w-4 h-4 text-brand-600 dark:text-cyan-400"></i>
+        <span>Home (GMAP)</span>
+      </a>
+
+      <!-- Theme Switcher -->
+      <button id="t-theme" class="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition" title="Toggle Light/Dark Theme">
+        <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+        <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-700"></i>
+      </button>
+
+      <!-- Quick Reset -->
+      <button id="t-reset" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
+      </button>
+
+      <!-- Save PDF Button -->
+      <button id="t-pdf" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-md shadow-brand-500/20 transition hover:scale-[1.02] active:scale-[0.98]">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        <span>Export PDF</span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Trigger Controls -->
+    <div class="flex items-center gap-1.5 md:hidden">
+      <!-- Mobile Home Direct Link -->
+      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" 
+         class="p-2.5 rounded-xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-cyan-400 border border-brand-200 dark:border-brand-500/20 active:scale-95 transition" title="HNBF GMAP Home">
+        <i data-lucide="home" class="w-4 h-4"></i>
+      </a>
+
+      <!-- Drawer Menu Toggle Button -->
+      <button id="m-drawer-toggle" class="p-2.5 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-200/60 dark:bg-slate-800/60 active:scale-95 transition" aria-label="Open Mobile Menu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE DRAWER MENU OVERLAY -->
+<div id="m-drawer" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300">
+  <div class="fixed right-0 top-0 bottom-0 w-4/5 max-w-xs glass-card border-l border-slate-200 dark:border-slate-800 p-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+    <div class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div class="flex items-center gap-2">
+          <i data-lucide="bike" class="w-5 h-5 text-brand-600 dark:text-cyan-400"></i>
+          <span class="font-extrabold text-base text-slate-900 dark:text-white">Lease Pro Menu</span>
+        </div>
+        <button id="m-drawer-close" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="space-y-2">
+        <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" class="flex items-center gap-3 w-full p-3 rounded-xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-cyan-400 font-bold text-sm">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          <span>HNBF GMAP Portal 🏠</span>
+        </a>
+
+        <button id="m-theme-drawer" class="flex items-center justify-between w-full p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm transition">
+          <span class="flex items-center gap-3">
+            <i data-lucide="moon" class="w-4 h-4 text-slate-500"></i>
+            <span>Theme Toggle</span>
+          </span>
+          <span class="text-xs text-brand-600 dark:text-cyan-400 font-bold">Dark / Light</span>
+        </button>
+
+        <button id="m-pdf-drawer" class="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm transition">
+          <i data-lucide="file-text" class="w-4 h-4 text-indigo-500"></i>
+          <span>Export Quotation PDF</span>
+        </button>
+
+        <button id="m-reset-drawer" class="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-semibold text-sm transition">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>Reset Inputs</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
+      <p class="font-semibold text-slate-600 dark:text-slate-300">HNB Finance PLC</p>
+      <p class="text-[10px]">Smart Leasing Assistant v2.5</p>
+    </div>
+  </div>
+</div>
+
+<!-- Main Container -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 flex-1 w-full">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+
+    <!-- LEFT COLUMN: INPUT CONTROLS -->
+    <div class="lg:col-span-7 space-y-4 sm:space-y-5">
+
+      <!-- SECTION 1: VEHICLE SELECTION CARD -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
+          <div class="flex items-center gap-2">
+            <div class="p-2 rounded-lg bg-blue-500/10 text-brand-600 dark:text-cyan-400">
+              <i data-lucide="navigation" class="w-4 h-4"></i>
+            </div>
+            <h2 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Vehicle Selection</h2>
+          </div>
+
+          <!-- Brand New Checkbox Badge -->
+          <label class="relative inline-flex items-center cursor-pointer select-none">
+            <input type="checkbox" id="bn" checked class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:after:border-slate-600 peer-checked:bg-brand-600"></div>
+            <span class="ml-2 text-xs font-semibold text-slate-700 dark:text-slate-300">Brand New</span>
+          </label>
+        </div>
+
+        <!-- Make Selection Filter Pills -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Select Brand / Make</label>
+          <div id="make-pills" class="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none touch-pan-x">
+            <!-- Dynamically Rendered Chips -->
+          </div>
+          <select id="make" class="sr-only"></select>
+        </div>
+
+        <!-- Model Quick Search & Select -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Select Model</label>
+            <span id="model-count" class="text-[10px] text-slate-400 font-medium"></span>
+          </div>
+          
+          <!-- Live Filter Input for Mobile -->
+          <div class="relative mb-2">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            </span>
+            <input type="text" id="model-search" placeholder="Quick filter model name..." 
+              class="glass-input w-full rounded-xl pl-9 pr-3 py-2 text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none">
+          </div>
+
+          <div class="relative">
+            <select id="model" class="glass-input w-full rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white appearance-none cursor-pointer focus:outline-none">
+              <!-- Dynamically Populated -->
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle Spec Cards Grid -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
+          <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">Normal Price</span>
+            <span id="price" class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white nums-tabular">–</span>
+          </div>
+          <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">New Invoice</span>
+            <span id="inv" class="text-xs sm:text-sm font-bold text-brand-600 dark:text-cyan-400 nums-tabular">–</span>
+          </div>
+          <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">Max Exposure</span>
+            <span id="ltv" class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white nums-tabular">–</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: DOWN PAYMENT HIGHLIGHT CARD -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5 border-l-4 border-l-brand-600 dark:border-l-cyan-400">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h2 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Down Payment</h2>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400">Set customer investment</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Min. Required</span>
+            <div id="mindp-badge" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/50 inline-block">
+              –
+            </div>
+          </div>
+        </div>
+
+        <!-- Down Payment Input Field -->
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-xs font-bold text-slate-400">Rs.</span>
+          <input type="number" inputmode="decimal" id="dp" placeholder="Enter Down Payment amount..." 
+            class="glass-input w-full rounded-xl pl-11 pr-4 py-3 text-base font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none">
+        </div>
+
+        <!-- Quick Percentage Selector Buttons -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <span class="text-[10px] text-slate-500 font-semibold mr-1 shrink-0">Quick DP:</span>
+          <button id="btn-dp-min" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">Min DP</button>
+          <button id="btn-dp-30" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">30%</button>
+          <button id="btn-dp-40" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">40%</button>
+          <button id="btn-dp-50" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">50%</button>
+        </div>
+
+        <!-- Dynamic Visual Progress Bar -->
+        <div class="space-y-1 pt-1">
+          <div class="flex justify-between text-[10px] font-medium text-slate-500">
+            <span>DP Coverage</span>
+            <span id="dp-pct-text">0% of Bike Price</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div id="dp-progress" class="h-full bg-gradient-to-r from-brand-500 to-emerald-400 transition-all duration-300 w-0"></div>
+          </div>
+        </div>
+
+        <!-- Validation Banner for DP -->
+        <div id="dpmsg" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
+          <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+          <span id="dpmsg-text"></span>
+        </div>
+      </div>
+
+      <!-- SECTION 3: OFFERS, INSURANCE & COMMISSIONS -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800">
+          <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+          </div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Add-ons & Charges</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Promotional Offer -->
+          <div class="space-y-1.5 p-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-800">
+            <div class="flex items-center justify-between">
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="pro" checked class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 dark:bg-slate-900">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Pro. Offer</span>
+              </label>
+              <span class="text-[9px] bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300 px-1.5 py-0.5 rounded font-semibold">Standard</span>
+            </div>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
+              <input type="number" inputmode="decimal" id="proa" value="6000" class="glass-input w-full rounded-lg pl-9 pr-3 py-2 text-xs font-bold text-slate-900 dark:text-white">
+            </div>
+          </div>
+
+          <!-- RMV Fee -->
+          <div class="space-y-1.5 p-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-800">
+            <div class="flex items-center justify-between">
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="rmv" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 dark:bg-slate-900">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">RMV Fee</span>
+              </label>
+              <span id="rmv-badge" class="text-[9px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded font-semibold">Optional</span>
+            </div>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
+              <input type="number" inputmode="decimal" id="rmva" value="0" class="glass-input w-full rounded-lg pl-9 pr-3 py-2 text-xs font-bold text-slate-900 dark:text-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- Insurance Input -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
+              Insurance Amount <span class="text-rose-500">*</span>
+            </label>
+            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Auto-filled if available</span>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
+            <input type="number" inputmode="decimal" id="ins" placeholder="Enter insurance premium..." 
+              class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+          </div>
+          <div id="insmsg" class="hidden text-xs text-rose-500 font-medium flex items-center gap-1 mt-1">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Insurance amount is required.
+          </div>
+        </div>
+
+        <!-- Introducer Commission Input -->
+        <div class="space-y-1.5">
+          <label id="intrl" class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
+            Introducer Commission (Max 4% of New Invoice)
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
+            <input type="number" inputmode="decimal" id="intr" value="0" min="0" 
+              class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+          </div>
+          <div id="intrmsg" class="hidden p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-400 text-xs font-medium"></div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: TENURE & INTEREST RATE -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800">
+          <div class="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <i data-lucide="percent" class="w-4 h-4"></i>
+          </div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Rate & Tenure Terms</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Interest Rate Input -->
+          <div class="space-y-1 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Annual Rate (%)</label>
+            <div class="relative">
+              <input type="number" inputmode="decimal" id="rate" value="23" step="0.01" 
+                class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+              <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold text-slate-400">%</span>
+            </div>
+          </div>
+
+          <!-- Tenure Selection Grid -->
+          <div class="space-y-1 sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Lease Duration</label>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="relative">
+                <select id="yr" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white appearance-none cursor-pointer">
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                  <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                </div>
+              </div>
+
+              <div class="relative">
+                <select id="mo" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white appearance-none cursor-pointer">
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                  <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rate Validation Warning -->
+        <div id="ratemsg" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-xs font-medium flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-4 h-4 shrink-0"></i>
+          <span id="ratemsg-text"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: REAL-TIME SUMMARY & CALCULATED RESULTS -->
+    <div class="lg:col-span-5 space-y-4 sm:space-y-5">
+
+      <!-- HERO INSTALLMENT CARD -->
+      <div class="glass-card rounded-2xl p-5 sm:p-6 shadow-xl border border-brand-500/20 glow-box-blue bg-gradient-to-b from-white/90 to-brand-50/40 dark:from-slate-900/90 dark:to-slate-900/60 relative overflow-hidden">
+        
+        <div class="absolute -top-12 -right-12 w-36 h-36 bg-brand-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="relative z-10 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-cyan-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Monthly Installment
+            </span>
+            <span id="summary-tenure-badge" class="text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              Select Tenure
+            </span>
+          </div>
+
+          <!-- Monthly Installment Amount -->
+          <div class="py-1 text-center lg:text-left">
+            <div id="inst" class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight nums-tabular">
+              –
+            </div>
+            <div id="tot" class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+              Select options to calculate
+            </div>
+          </div>
+
+          <!-- Primary Action Button: Save PDF -->
+          <button id="b-pdf" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 via-indigo-600 to-cyan-500 hover:from-brand-500 hover:to-cyan-400 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-500/25 transition hover:shadow-brand-500/40 flex items-center justify-center gap-2 group active:scale-[0.99]">
+            <i data-lucide="file-check" class="w-4 h-4 group-hover:scale-110 transition"></i>
+            <span>Generate PDF Quotation</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DETAILED COST BREAKDOWN CARD -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5">
+        <h3 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm pb-2 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+          <span>Loan Facility Breakdown</span>
+          <i data-lucide="pie-chart" class="w-4 h-4 text-slate-400"></i>
+        </h3>
+
+        <div class="space-y-2 text-xs font-medium">
+          <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+            <span class="text-slate-500 dark:text-slate-400">Price − Down Payment</span>
+            <b id="r1" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+            <span class="text-slate-500 dark:text-slate-400">+ Pro. Offer</span>
+            <b id="r2" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+            <span class="text-slate-500 dark:text-slate-400">+ Insurance</span>
+            <b id="r3" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+            <span class="text-slate-500 dark:text-slate-400">+ Introducer Commission</span>
+            <b id="r4" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+            <span class="text-slate-500 dark:text-slate-400">+ RMV Fee</span>
+            <b id="r5" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
+          </div>
+
+          <!-- Total Facility / Leasing Amount -->
+          <div class="flex justify-between items-center pt-2 text-xs sm:text-sm font-bold">
+            <span class="text-slate-900 dark:text-white">Total Leasing Amount</span>
+            <b id="la" class="text-brand-600 dark:text-cyan-400 text-sm sm:text-base nums-tabular">–</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIRECT LINK TO GMAP BANNER CARD -->
+      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" 
+         class="block p-4 rounded-xl bg-gradient-to-r from-brand-500/10 via-indigo-500/10 to-cyan-500/10 border border-brand-500/20 hover:border-brand-500/40 transition group">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="p-2 rounded-lg bg-brand-600 text-white shadow-sm">
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white">HNB Finance GMAP Portal</span>
+              <span class="block text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">Open main map application directly</span>
+            </div>
+          </div>
+          <i data-lucide="external-link" class="w-4 h-4 text-brand-600 dark:text-cyan-400 group-hover:translate-x-0.5 transition"></i>
+        </div>
+      </a>
+
+    </div>
+
+  </div>
+</main>
+
+<!-- MOBILE FIXED BOTTOM ACTION BAR -->
+<div class="fixed bottom-0 inset-x-0 z-40 lg:hidden glass-card border-t border-slate-200 dark:border-slate-800 p-3 px-4 shadow-2xl">
+  <div class="max-w-md mx-auto flex items-center justify-between gap-3">
+    <div>
+      <span class="block text-[9px] uppercase font-bold text-slate-400 tracking-wider">Monthly Installment</span>
+      <b id="bi" class="text-base sm:text-lg font-black text-brand-600 dark:text-cyan-400 nums-tabular">–</b>
+    </div>
+    <button id="b-pdf-mobile" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-brand-500/20 flex items-center gap-1.5 active:scale-95 transition">
+      <i data-lucide="file-text" class="w-4 h-4"></i> Save PDF
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: CUSTOMER DETAILS FOR PDF EXPORT -->
+<div id="ov" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="glass-card w-full max-w-md rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+      <div class="flex items-center gap-2">
+        <div class="p-2 rounded-lg bg-brand-500/10 text-brand-600 dark:text-cyan-400">
+          <i data-lucide="user-check" class="w-4 h-4"></i>
+        </div>
+        <h3 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Customer Details</h3>
+      </div>
+      <button id="cx" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Customer Name *</label>
+        <input type="text" id="cn" autocomplete="name" placeholder="e.g. Perera A.B.C." 
+          class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">NIC Number *</label>
+        <input type="text" id="cnic" maxlength="12" autocapitalize="characters" placeholder="e.g. 199012345678 or 901234567V" 
+          class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+      </div>
+
+      <!-- Modal Error Display -->
+      <div id="cerr" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
+        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+        <span id="cerr-text"></span>
+      </div>
+    </div>
+
+    <!-- Modal Action Buttons -->
+    <div class="flex items-center gap-2 pt-2">
+      <button id="cx-btn" class="flex-1 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        Cancel
+      </button>
+      <button id="cs" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-brand-500/20 hover:scale-[1.01] transition flex items-center justify-center gap-1.5">
+        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+// ===== PRESERVED DATA ARRAYS =====
 const MODELS=[
 ["YAMAHA","RAY ZR DISK 113",689900,482930,206970],
 ["YAMAHA","RAY ZR DISK 113 DIGITAL",719900,503930,215970],
@@ -224,133 +725,401 @@ const MODELS=[
 ["HUAIHAI BY KAPLA","XYS1 MINI BIKE",229900,91960,137940],
 ["HUAIHAI BY KAPLA","SCOOTER ZL 9",389900,155960,233940]
 ];
-// NEW INVOICE values, same order as MODELS
+
 const INV=[1207900,1260900,1445900,1496900,1872900,2098900,2152900,2257900,2589900,2896900,1342900,1413900,1499000,1235900,1235900,1282000,1112900,1253900,730900,1607900,1712900,1971900,1502900,1056900,3974900,4038000,2627900,1024500,1268900,1261900,1461900,1372900,1605900,899950,710950,799950,739950,1154950,440950,1248900,1097900,1395900,1048000,1198000,650000,650000,540000,420000,1195000,760000,1298000,880000,610000,1015000,1140900,659950,759950,856950,699950,855950,794950,974950,999950,1164950,1299950,2339950,1489950,1834950,2799950,524900,439900,769900,384900,349900,574900,690000,740000,790000,840000,770000,715000,274500,449500,839500,859500,399500,449500,344500,899900,699900,519500,695000,1090000,617000,699000,800000,950000,730000,920000,890000,229900,389900];
-// Insurance premium per model, same order as MODELS (from price list)
+
 const PINS=[22932,23596,26029,26709,31628,34585,35301,36672,41004,45014,24514,25433,26584,23131,null,23728,21540,23364,16600,27942,29299,32649,47014,35206,58554,59371,41134,20479,23727,23636,26248,25084,28136,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];
-// ==================================================================
+
+// Helpers
 const $=id=>document.getElementById(id);
 const f=n=>"Rs. "+(Math.round(n*100)/100).toLocaleString("en-LK",{minimumFractionDigits:2,maximumFractionDigits:2});
 const v=id=>parseFloat($(id).value)||0;
-[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>{const o=["TVS","BAJAJ","YAMAHA","HERO","HONDA"],a=o.indexOf(x),b=o.indexOf(y);return (a<0?99:a)-(b<0?99:b)}).forEach(k=>$("make").add(new Option(k,k)));
+
 const RMV_DEF={TVS:11000,BAJAJ:10160};
 const PRO_DEF=6000;
+
+lucide.createIcons();
+
+// Setup Makes & Filter Chips
+const makes=[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>{
+  const o=["TVS","BAJAJ","YAMAHA","HERO","HONDA"],a=o.indexOf(x),b=o.indexOf(y);
+  return (a<0?99:a)-(b<0?99:b);
+});
+
+const makeContainer = $("make-pills");
+makes.forEach((k, idx) => {
+  $("make").add(new Option(k,k));
+  
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = `px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+    idx === 0 
+      ? "bg-brand-600 text-white shadow-md shadow-brand-500/20 dark:bg-cyan-500 dark:text-slate-950" 
+      : "bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700"
+  }`;
+  btn.textContent = k;
+  btn.onclick = () => {
+    $("make").value = k;
+    updateMakeChips(k);
+    fillModels();
+  };
+  makeContainer.appendChild(btn);
+});
+
+function updateMakeChips(selected) {
+  Array.from(makeContainer.children).forEach(btn => {
+    if (btn.textContent === selected) {
+      btn.className = "px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-all bg-brand-600 text-white shadow-md shadow-brand-500/20 dark:bg-cyan-500 dark:text-slate-950";
+    } else {
+      btn.className = "px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-all bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700";
+    }
+  });
+}
+
 function rmvRule(){
   const bj=$("make").value==="BAJAJ";
   const wasLocked=$("rmv").disabled;
-  if(bj){$("rmv").checked=true;$("rmv").disabled=true;$("rmva").value=RMV_DEF.BAJAJ}
-  else{$("rmv").disabled=false;if(wasLocked)$("rmv").checked=false;
-    $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0}
+  if(bj){
+    $("rmv").checked=true;
+    $("rmv").disabled=true;
+    $("rmva").value=RMV_DEF.BAJAJ;
+    $("rmv-badge").textContent="Required (Bajaj)";
+    $("rmv-badge").className="text-[9px] bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 px-1.5 py-0.5 rounded font-semibold";
+  }
+  else{
+    $("rmv").disabled=false;
+    if(wasLocked)$("rmv").checked=false;
+    $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0;
+    $("rmv-badge").textContent="Optional";
+    $("rmv-badge").className="text-[9px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded font-semibold";
+  }
 }
-function fillModels(){const s=$("model");s.innerHTML="";MODELS.forEach((m,i)=>{if(m[0]===$("make").value)s.add(new Option(m[1],i))});rmvRule();setIns();}
-function setIns(){const p=PINS[$("model").value];$("ins").value=p==null?"":p;calc()}
+
+function fillModels(){
+  const s=$("model");
+  const filterText = ($("model-search").value || "").toLowerCase().trim();
+  s.innerHTML="";
+  
+  let count = 0;
+  MODELS.forEach((m,i)=>{
+    if(m[0]===$("make").value) {
+      if(!filterText || m[1].toLowerCase().includes(filterText)) {
+        s.add(new Option(m[1], i));
+        count++;
+      }
+    }
+  });
+
+  $("model-count").textContent = count + " model" + (count !== 1 ? "s" : "");
+
+  if (s.options.length === 0) {
+    s.add(new Option("No models matching search", ""));
+  }
+
+  rmvRule();
+  setIns();
+}
+
+function setIns(){
+  if(!$("model").value) return;
+  const p=PINS[$("model").value];
+  $("ins").value=p==null?"":p;
+  calc();
+}
+
 fillModels();
-$("make").addEventListener("input",fillModels);
-$("model").addEventListener("input",setIns);
-$("yr").add(new Option("Select",""));$("mo").add(new Option("Select",""));
-for(let y=1;y<=5;y++)$("yr").add(new Option(y+" yr",y));
-for(let m=1;m<=11;m++)$("mo").add(new Option(m+" mo",m));
+$("make").addEventListener("change", () => {
+  updateMakeChips($("make").value);
+  fillModels();
+});
+$("model").addEventListener("change", setIns);
+$("model-search").addEventListener("input", fillModels);
+
+// Tenure options
+$("yr").add(new Option("Select Years", ""));
+$("mo").add(new Option("Select Months", ""));
+for(let y=1; y<=5; y++) $("yr").add(new Option(y+" Year"+(y>1?"s":""), y));
+for(let m=1; m<=11; m++) $("mo").add(new Option(m+" Month"+(m>1?"s":""), m));
+
+// ===== MAIN CALCULATION LOGIC =====
 function calc(){
-  const m=MODELS[$("model").value],price=m[2],maxLoan=m[3];
+  if(!$("model").value) return;
+  const m=MODELS[$("model").value], price=m[2], maxLoan=m[3];
   const ltv=maxLoan/price*100;
   const minDp=m[4];
-  $("price").textContent=f(price);$("inv").textContent=f(INV[$("model").value]);$("ltv").textContent=f(maxLoan);
-  $("mindp").textContent="Minimum Down Payment: "+f(minDp);
+
+  $("price").textContent=f(price);
+  $("inv").textContent=f(INV[$("model").value]);
+  $("ltv").textContent=f(maxLoan);
+  $("mindp-badge").textContent=f(minDp);
+
   const dpEmpty=$("dp").value==="";
   const dp=v("dp");
-  const low=!dpEmpty&&dp<minDp;
-  $("dp").classList.toggle("err",low);$("dp").classList.toggle("good",!dpEmpty&&!low);
-  $("mindp").className="box "+(low?"bad":"ok");
-  const msg=$("dpmsg");msg.style.display=low?"block":"none";
-  if(low)msg.textContent="Down payment is "+f(minDp-dp)+" short of the minimum (max exposure exceeded)";
+  const low=!dpEmpty && dp < minDp;
+
+  const dpPct = price > 0 ? Math.min(Math.round((dp / price) * 100), 100) : 0;
+  $("dp-progress").style.width = dpPct + "%";
+  $("dp-pct-text").textContent = dpPct + "% of Bike Price";
+
+  const msg=$("dpmsg");
+  if(low) {
+    msg.classList.remove("hidden");
+    $("dpmsg-text").textContent="Down payment is "+f(minDp-dp)+" short of minimum requirement.";
+  } else {
+    msg.classList.add("hidden");
+  }
+
   const base=Math.max(price-dp,0);
   const pro=$("pro").checked?v("proa"):0;
   const rmv=$("rmv").checked?v("rmva"):0;
+
   const maxIntr=Math.floor(INV[$("model").value]*0.04*100)/100;
-  $("intrl").textContent="Introducer Commission (4% of New Invoice = "+f(maxIntr)+" [Max]  |  3% = "+f(Math.floor(INV[$("model").value]*0.03*100)/100)+")";
+  $("intrl").textContent="Introducer Commission (4% Max = "+f(maxIntr)+")";
   $("intr").max=maxIntr;
+
   const im=$("intrmsg");
-  if(v("intr")>maxIntr){$("intr").value=maxIntr;im.textContent="Introducer Commission limited to 4% of New Invoice ("+f(maxIntr)+")";im.style.display="block"}
-  else{im.style.display="none"}
-  if(v("intr")<0)$("intr").value=0;
-  const ins=v("ins"),intr=v("intr");
+  if(v("intr")>maxIntr){
+    $("intr").value=maxIntr;
+    im.textContent="Commission capped at 4% of New Invoice ("+f(maxIntr)+")";
+    im.classList.remove("hidden");
+  } else {
+    im.classList.add("hidden");
+  }
+
+  if(v("intr")<0) $("intr").value=0;
+
+  const ins=v("ins"), intr=v("intr");
   const ipct=intr/INV[$("model").value]*100;
-  const rm=$("ratemsg"),rt=v("rate");
+
+  const rm=$("ratemsg"), rt=v("rate");
   let rmsg="";
-  if(ipct>=3.99){if(rt<=26)rmsg="Introducer commission is 4% of New Invoice – Rate must be more than 26%"}
-  else if(ipct>=3){if(rt<23)rmsg="Introducer commission is "+(Math.round(ipct*100)/100)+"% of New Invoice – Rate must be 23% or more"}
-  rm.style.display=rmsg?"block":"none";rm.textContent=rmsg;
+  if(ipct>=3.99){
+    if(rt<=26) rmsg="Commission is 4% of Invoice – Interest rate must exceed 26%";
+  } else if(ipct>=3){
+    if(rt<23) rmsg="Commission is "+(Math.round(ipct*100)/100)+"% of Invoice – Rate must be 23% or higher";
+  }
+
+  if(rmsg) {
+    rm.classList.remove("hidden");
+    $("ratemsg-text").textContent = rmsg;
+  } else {
+    rm.classList.add("hidden");
+  }
+
   const insMiss=!(ins>0);
-  $("insmsg").style.display=insMiss?"block":"none";
+  if(insMiss) {
+    $("insmsg").classList.remove("hidden");
+  } else {
+    $("insmsg").classList.add("hidden");
+  }
+
   const L=base+pro+ins+intr+rmv;
-  $("r1").textContent=f(base);$("r2").textContent=f(pro);$("r3").textContent=f(ins);
-  $("r4").textContent=f(intr);$("r5").textContent=f(rmv);$("la").textContent=f(L);
+  $("r1").textContent=f(base);
+  $("r2").textContent=f(pro);
+  $("r3").textContent=f(ins);
+  $("r4").textContent=f(intr);
+  $("r5").textContent=f(rmv);
+  $("la").textContent=f(L);
+
   const n=v("yr")*12+v("mo");
   const rate=v("rate")/100;
   let pay=0;
-  if(n>0&&L>0){
-    const i=rate/12;pay=i===0?L/n:L*i/(1-Math.pow(1+i,-n));
+
+  if(n>0 && L>0){
+    const i=rate/12;
+    pay=i===0 ? L/n : L*i/(1-Math.pow(1+i,-n));
   }
-  $("inst").textContent=insMiss?"Enter Insurance Amount":n>0?f(pay):"Select tenure";
-  $("bi").textContent=$("inst").textContent;
+
+  if(insMiss) {
+    $("inst").textContent = "Missing Ins.";
+    $("tot").textContent = "Please enter insurance amount to calculate.";
+  } else if(n>0) {
+    $("inst").textContent = f(pay);
+    $("tot").textContent = n+" installments × "+f(pay)+" = "+f(pay*n);
+    $("summary-tenure-badge").textContent = n + " Months";
+  } else {
+    $("inst").textContent = "Select Tenure";
+    $("tot").textContent = "Choose months or years above";
+    $("summary-tenure-badge").textContent = "Select Tenure";
+  }
+
+  $("bi").textContent = $("inst").textContent;
+
   window.R={m,price,inv:INV[$("model").value],bn:$("bn").checked,dp,base,pro,ins,intr,rmv,L,rate:v("rate"),yr:v("yr"),mo:v("mo"),n,pay,insMiss};
-  $("tot").textContent=n>0&&L>0?n+" months × "+f(pay)+" = "+f(pay*n):"";
 }
+
 document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",calc));
-calc();
 
-// ===== Pro offer / RMV tick behaviour =====
-$("pro").addEventListener("change",()=>{$("proa").value=$("pro").checked?PRO_DEF:0;calc()});
-$("rmv").addEventListener("change",()=>{$("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0;calc()});
-// ===== Menu =====
-const closeMenu=()=>$("menu").classList.remove("open");
-$("mb").onclick=e=>{e.stopPropagation();$("menu").classList.toggle("open")};
-document.addEventListener("click",e=>{if(!$("menu").contains(e.target))closeMenu()});
-$("m-theme").onclick=()=>{closeMenu();const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
-$("m-reset").onclick=()=>{closeMenu();if(confirm("Reset all fields?"))location.reload()};
+// Quick Down Payment Buttons
+$("btn-dp-min").onclick = () => { $("dp").value = MODELS[$("model").value][4]; calc(); };
+$("btn-dp-30").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2] * 0.30); calc(); };
+$("btn-dp-40").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2] * 0.40); calc(); };
+$("btn-dp-50").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2] * 0.50); calc(); };
 
-// ===== Save as PDF =====
-function openSave(){
-  closeMenu();calc();const R=window.R;
-  if(R.insMiss){alert("Please enter the Insurance Amount.");$("ins").focus();return}
-  if(R.m[0]==="BAJAJ"&&!(R.rmv>0)){alert("RMV amount is required for BAJAJ.");$("rmva").focus();return}
-  if(R.n<=0){alert("Please select the tenure.");return}
-  $("cerr").style.display="none";$("ov").classList.add("open");$("cn").focus();
-}
-$("m-pdf").onclick=openSave;$("b-pdf").onclick=openSave;
-$("cx").onclick=()=>$("ov").classList.remove("open");
-$("cs").onclick=()=>{
-  const name=$("cn").value.trim(),nic=$("cnic").value.trim().toUpperCase(),er=$("cerr");
-  let msg="";
-  if(!name)msg="Customer Name is required";
-  else if(!/^(\d{9}[VX]|\d{12})$/.test(nic))msg="Enter a valid NIC (12 digits, or 9 digits + V/X)";
-  if(msg){er.textContent=msg;er.style.display="block";return}
-  if(!window.jspdf){er.textContent="PDF library could not load. Check your internet connection and try again.";er.style.display="block";return}
-  makePDF(name,nic);$("ov").classList.remove("open");
+$("pro").addEventListener("change",()=>{ $("proa").value=$("pro").checked?PRO_DEF:0; calc(); });
+$("rmv").addEventListener("change",()=>{ $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0; calc(); });
+
+// Theme Switching Logic
+const toggleTheme = () => document.documentElement.classList.toggle('dark');
+$("t-theme").onclick = toggleTheme;
+$("m-theme-drawer").onclick = toggleTheme;
+
+// Mobile Drawer Interactivity
+const drawer = $("m-drawer");
+const openDrawer = () => drawer.classList.remove("hidden");
+const closeDrawer = () => drawer.classList.add("hidden");
+
+$("m-drawer-toggle").onclick = openDrawer;
+$("m-drawer-close").onclick = closeDrawer;
+drawer.onclick = (e) => { if(e.target === drawer) closeDrawer(); };
+
+// Reset Handlers
+const doReset = () => {
+  if(confirm("Reset all calculator inputs?")) location.reload();
 };
-function makePDF(name,nic){
-  const R=window.R,d=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
-  const L=18,E=192;let y=20;
-  d.setFont("helvetica","bold");d.setFontSize(18);d.text("HNB Finance - Leasing Quotation",L,y);y+=7;
-  d.setFont("helvetica","normal");d.setFontSize(10);d.text("Date: "+new Date().toLocaleDateString("en-GB"),L,y);y+=10;
-  const sec=t=>{d.setFont("helvetica","bold");d.setFontSize(12);d.text(t,L,y);y+=2;d.line(L,y,E,y);y+=7;d.setFont("helvetica","normal");d.setFontSize(11)};
-  const row=(a,b,bold)=>{d.setFont("helvetica",bold?"bold":"normal");d.text(a,L,y);d.text(String(b),E,y,{align:"right"});y+=7};
-  sec("Customer");row("Customer Name",name);row("NIC",nic);y+=4;
-  sec("Vehicle");row("Make",R.m[0]);row("Model",R.m[1]);row("Condition",R.bn?"Brand New":"Used");
-  row("New Invoice",f(R.inv));row("Normal Price",f(R.price));y+=4;
-  sec("Leasing Details");
-  row("Down Payment",f(R.dp));row("Price - Down Payment",f(R.base));
-  if(R.pro)row("+ Pro. Offer",f(R.pro));
-  row("+ Insurance",f(R.ins));row("+ Introducer Commission",f(R.intr));
-  if(R.rmv)row("+ RMV",f(R.rmv));
-  row("Leasing Amount",f(R.L),true);y+=4;
-  sec("Installment");
-  row("Rate (per year)",R.rate+"%");
-  row("Tenure",(R.yr?R.yr+" yr ":"")+(R.mo?R.mo+" mo":"")+" ("+R.n+" months)");
-  row("Monthly Installment",f(R.pay),true);
-  row("Total Payable",f(R.pay*R.n));
-  d.save((name+"_"+nic).replace(/[^A-Za-z0-9]+/g,"_")+".pdf");
+$("t-reset").onclick = doReset;
+$("m-reset-drawer").onclick = () => { closeDrawer(); doReset(); };
+
+// PDF Save Trigger
+function openSaveModal(){
+  calc();
+  const R=window.R;
+  if(R.insMiss){
+    alert("Please enter a valid Insurance Amount.");
+    $("ins").focus();
+    return;
+  }
+  if(R.m[0]==="BAJAJ" && !(R.rmv>0)){
+    alert("RMV amount is mandatory for BAJAJ vehicles.");
+    $("rmva").focus();
+    return;
+  }
+  if(R.n<=0){
+    alert("Please select the lease tenure.");
+    return;
+  }
+  $("cerr").classList.add("hidden");
+  $("ov").classList.remove("hidden");
+  $("cn").focus();
 }
+
+$("t-pdf").onclick = openSaveModal;
+$("b-pdf").onclick = openSaveModal;
+$("b-pdf-mobile").onclick = openSaveModal;
+$("m-pdf-drawer").onclick = () => { closeDrawer(); openSaveModal(); };
+
+const closeModal = () => $("ov").classList.add("hidden");
+$("cx").onclick = closeModal;
+$("cx-btn").onclick = closeModal;
+
+// Export PDF Document
+$("cs").onclick = () => {
+  const name = $("cn").value.trim();
+  const nic = $("cnic").value.trim().toUpperCase();
+  const er = $("cerr");
+
+  let msg = "";
+  if(!name) msg = "Customer Name is required";
+  else if(!/^(\d{9}[VX]|\d{12})$/.test(nic)) msg = "Enter a valid NIC (12 digits, or 9 digits + V/X)";
+
+  if(msg){
+    er.classList.remove("hidden");
+    $("cerr-text").textContent = msg;
+    return;
+  }
+
+  if(!window.jspdf){
+    er.classList.remove("hidden");
+    $("cerr-text").textContent = "PDF engine loading error. Check internet connection.";
+    return;
+  }
+
+  makePDF(name, nic);
+  closeModal();
+};
+
+function makePDF(name, nic){
+  const R=window.R;
+  const d=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+  const L=18, E=192;
+  let y=20;
+
+  d.setFillColor(29, 78, 216);
+  d.rect(0, 0, 210, 12, "F");
+
+  d.setFont("helvetica","bold");
+  d.setFontSize(18);
+  d.setTextColor(29, 78, 216);
+  d.text("HNB Finance - Leasing Quotation", L, y);
+  y+=7;
+
+  d.setFont("helvetica","normal");
+  d.setFontSize(10);
+  d.setTextColor(100, 116, 139);
+  d.text("Date: "+new Date().toLocaleDateString("en-GB") + " | Official Loan Quotation", L, y);
+  y+=10;
+
+  const sec=t=>{
+    d.setFont("helvetica","bold");
+    d.setFontSize(12);
+    d.setTextColor(15, 23, 42);
+    d.text(t, L, y);
+    y+=2;
+    d.setDrawColor(226, 232, 240);
+    d.line(L, y, E, y);
+    y+=7;
+    d.setFont("helvetica","normal");
+    d.setFontSize(11);
+    d.setTextColor(51, 65, 85);
+  };
+
+  const row=(a,b,bold)=>{
+    d.setFont("helvetica", bold?"bold":"normal");
+    if(bold) d.setTextColor(15, 23, 42); else d.setTextColor(51, 65, 85);
+    d.text(a, L, y);
+    d.text(String(b), E, y, {align:"right"});
+    y+=7;
+  };
+
+  sec("Customer Details");
+  row("Customer Name", name);
+  row("NIC Number", nic);
+  y+=3;
+
+  sec("Vehicle Specifications");
+  row("Make", R.m[0]);
+  row("Model", R.m[1]);
+  row("Condition", R.bn?"Brand New":"Used");
+  row("New Invoice Value", f(R.inv));
+  row("Normal Price", f(R.price));
+  y+=3;
+
+  sec("Lease Facilities & Fees Breakdown");
+  row("Down Payment", f(R.dp));
+  row("Price - Down Payment", f(R.base));
+  if(R.pro) row("+ Promotional Offer", f(R.pro));
+  row("+ Insurance Premium", f(R.ins));
+  row("+ Introducer Commission", f(R.intr));
+  if(R.rmv) row("+ RMV Registration Fee", f(R.rmv));
+  row("Total Facility (Leasing Amount)", f(R.L), true);
+  y+=3;
+
+  sec("Repayment Terms");
+  row("Interest Rate (Annual)", R.rate+"%");
+  row("Tenure Duration", (R.yr?R.yr+" yr ":"")+(R.mo?R.mo+" mo":"")+" ("+R.n+" months)");
+  row("Monthly Installment", f(R.pay), true);
+  row("Total Payable Amount", f(R.pay*R.n));
+
+  y = 275;
+  d.setFontSize(8);
+  d.setTextColor(148, 163, 184);
+  d.text("Generated electronically via HNB Finance Lease Pro system. Subject to credit appraisal.", L, y);
+
+  d.save((name+"_"+nic).replace(/[^A-Za-z0-9]+/g,"_")+"_Lease_Quotation.pdf");
+}
+
+// Initial calculation run
+calc();
 </script>
 </body>
 </html>
