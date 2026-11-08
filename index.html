@@ -64,7 +64,10 @@ input.good{border-color:var(--ok)}
   <div class="row"><span>Max LTV (Max Exposure)</span><b id="ltv">–</b></div>
   <div class="box ok" id="mindp">Minimum Down Payment: –</div>
 
-  <label>Down Payment (Rs.)</label>
+</div>
+
+<div class="c">
+  <label style="margin-top:0">Down Payment (Rs.)</label>
   <input type="number" inputmode="decimal" id="dp" placeholder="Enter down payment">
   <div class="box bad" id="dpmsg" style="display:none"></div>
 </div>
@@ -84,6 +87,7 @@ input.good{border-color:var(--ok)}
   <div class="r">
     <div><label>Rate (% per year)</label><input type="number" inputmode="decimal" id="rate" value="23" step="0.01"></div>
   </div>
+  <div class="box bad" id="ratemsg" style="display:none;margin-top:6px"></div>
   <div class="r">
     <div><label>Tenure – Years</label><select id="yr"></select></div>
     <div><label>Months</label><select id="mo"></select></div>
@@ -228,12 +232,15 @@ const PINS=[22932,23596,26029,26709,31628,34585,35301,36672,41004,45014,24514,25
 const $=id=>document.getElementById(id);
 const f=n=>"Rs. "+(Math.round(n*100)/100).toLocaleString("en-LK",{minimumFractionDigits:2,maximumFractionDigits:2});
 const v=id=>parseFloat($(id).value)||0;
-[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>(y==="TVS")-(x==="TVS")).forEach(k=>$("make").add(new Option(k,k)));
-const BAJAJ_RMV=10160;
+[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>{const o=["TVS","BAJAJ","YAMAHA","HERO","HONDA"],a=o.indexOf(x),b=o.indexOf(y);return (a<0?99:a)-(b<0?99:b)}).forEach(k=>$("make").add(new Option(k,k)));
+const RMV_DEF={TVS:11000,BAJAJ:10160};
+const PRO_DEF=6000;
 function rmvRule(){
   const bj=$("make").value==="BAJAJ";
-  if(bj){$("rmv").checked=true;$("rmv").disabled=true;if(!(v("rmva")>0))$("rmva").value=BAJAJ_RMV}
-  else{if($("rmv").disabled){$("rmv").checked=false;$("rmva").value=0}$("rmv").disabled=false}
+  const wasLocked=$("rmv").disabled;
+  if(bj){$("rmv").checked=true;$("rmv").disabled=true;$("rmva").value=RMV_DEF.BAJAJ}
+  else{$("rmv").disabled=false;if(wasLocked)$("rmv").checked=false;
+    $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0}
 }
 function fillModels(){const s=$("model");s.innerHTML="";MODELS.forEach((m,i)=>{if(m[0]===$("make").value)s.add(new Option(m[1],i))});rmvRule();setIns();}
 function setIns(){const p=PINS[$("model").value];$("ins").value=p==null?"":p;calc()}
@@ -241,7 +248,7 @@ fillModels();
 $("make").addEventListener("input",fillModels);
 $("model").addEventListener("input",setIns);
 $("yr").add(new Option("Select",""));$("mo").add(new Option("Select",""));
-for(let y=1;y<=7;y++)$("yr").add(new Option(y+" yr",y));
+for(let y=1;y<=5;y++)$("yr").add(new Option(y+" yr",y));
 for(let m=1;m<=11;m++)$("mo").add(new Option(m+" mo",m));
 function calc(){
   const m=MODELS[$("model").value],price=m[2],maxLoan=m[3];
@@ -267,6 +274,10 @@ function calc(){
   else{im.style.display="none"}
   if(v("intr")<0)$("intr").value=0;
   const ins=v("ins"),intr=v("intr");
+  const ipct=intr/INV[$("model").value]*100;
+  const rm=$("ratemsg"),lowRate=ipct>=3&&v("rate")<=26;
+  rm.style.display=lowRate?"block":"none";
+  if(lowRate)rm.textContent="Introducer commission is "+(Math.round(ipct*100)/100)+"% of New Invoice – Rate must be more than 26%";
   const insMiss=!(ins>0);
   $("insmsg").style.display=insMiss?"block":"none";
   const L=base+pro+ins+intr+rmv;
@@ -286,6 +297,9 @@ function calc(){
 document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",calc));
 calc();
 
+// ===== Pro offer / RMV tick behaviour =====
+$("pro").addEventListener("change",()=>{$("proa").value=$("pro").checked?PRO_DEF:0;calc()});
+$("rmv").addEventListener("change",()=>{$("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0;calc()});
 // ===== Menu =====
 const closeMenu=()=>$("menu").classList.remove("open");
 $("mb").onclick=e=>{e.stopPropagation();$("menu").classList.toggle("open")};
