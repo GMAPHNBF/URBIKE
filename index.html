@@ -228,8 +228,14 @@ const PINS=[22932,23596,26029,26709,31628,34585,35301,36672,41004,45014,24514,25
 const $=id=>document.getElementById(id);
 const f=n=>"Rs. "+(Math.round(n*100)/100).toLocaleString("en-LK",{minimumFractionDigits:2,maximumFractionDigits:2});
 const v=id=>parseFloat($(id).value)||0;
-[...new Set(MODELS.map(m=>m[0]))].forEach(k=>$("make").add(new Option(k,k)));
-function fillModels(){const s=$("model");s.innerHTML="";MODELS.forEach((m,i)=>{if(m[0]===$("make").value)s.add(new Option(m[1],i))});setIns();}
+[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>(y==="TVS")-(x==="TVS")).forEach(k=>$("make").add(new Option(k,k)));
+const BAJAJ_RMV=10160;
+function rmvRule(){
+  const bj=$("make").value==="BAJAJ";
+  if(bj){$("rmv").checked=true;$("rmv").disabled=true;if(!(v("rmva")>0))$("rmva").value=BAJAJ_RMV}
+  else{if($("rmv").disabled){$("rmv").checked=false;$("rmva").value=0}$("rmv").disabled=false}
+}
+function fillModels(){const s=$("model");s.innerHTML="";MODELS.forEach((m,i)=>{if(m[0]===$("make").value)s.add(new Option(m[1],i))});rmvRule();setIns();}
 function setIns(){const p=PINS[$("model").value];$("ins").value=p==null?"":p;calc()}
 fillModels();
 $("make").addEventListener("input",fillModels);
@@ -291,6 +297,7 @@ $("m-reset").onclick=()=>{closeMenu();if(confirm("Reset all fields?"))location.r
 function openSave(){
   closeMenu();calc();const R=window.R;
   if(R.insMiss){alert("Please enter the Insurance Amount.");$("ins").focus();return}
+  if(R.m[0]==="BAJAJ"&&!(R.rmv>0)){alert("RMV amount is required for BAJAJ.");$("rmva").focus();return}
   if(R.n<=0){alert("Please select the tenure.");return}
   $("cerr").style.display="none";$("ov").classList.add("open");$("cn").focus();
 }
