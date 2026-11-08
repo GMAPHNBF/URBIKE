@@ -275,9 +275,11 @@ function calc(){
   if(v("intr")<0)$("intr").value=0;
   const ins=v("ins"),intr=v("intr");
   const ipct=intr/INV[$("model").value]*100;
-  const rm=$("ratemsg"),lowRate=ipct>=3&&v("rate")<=26;
-  rm.style.display=lowRate?"block":"none";
-  if(lowRate)rm.textContent="Introducer commission is "+(Math.round(ipct*100)/100)+"% of New Invoice – Rate must be more than 26%";
+  const rm=$("ratemsg"),rt=v("rate");
+  let rmsg="";
+  if(ipct>=3.99){if(rt<=26)rmsg="Introducer commission is 4% of New Invoice – Rate must be more than 26%"}
+  else if(ipct>=3){if(rt<23)rmsg="Introducer commission is "+(Math.round(ipct*100)/100)+"% of New Invoice – Rate must be 23% or more"}
+  rm.style.display=rmsg?"block":"none";rm.textContent=rmsg;
   const insMiss=!(ins>0);
   $("insmsg").style.display=insMiss?"block":"none";
   const L=base+pro+ins+intr+rmv;
