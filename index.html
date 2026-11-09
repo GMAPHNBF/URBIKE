@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -107,9 +107,6 @@
           <h1 class="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-slate-900 via-brand-600 to-indigo-600 dark:from-white dark:via-cyan-300 dark:to-brand-400 bg-clip-text text-transparent">
             HNB Finance
           </h1>
-          <span class="px-2 py-0.5 text-[9px] font-bold tracking-wide uppercase bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-cyan-400 rounded-full border border-brand-200 dark:border-brand-500/20">
-            Lease Pro
-          </span>
         </div>
         <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium">Smart Bike Calculator</p>
       </div>
@@ -315,9 +312,12 @@
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           <span class="text-[10px] text-slate-500 font-semibold mr-1 shrink-0">Quick DP:</span>
           <button id="btn-dp-min" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">Min DP</button>
-          <button id="btn-dp-30" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">30%</button>
-          <button id="btn-dp-40" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">40%</button>
-          <button id="btn-dp-50" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">50%</button>
+        </div>
+
+        <!-- LTV (Leasing Amount / New Invoice) -->
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">LTV <span class="font-medium text-[10px]">(Leasing Amount / New Invoice)</span></span>
+          <b id="ltv-pct" class="text-sm font-bold text-brand-600 dark:text-cyan-400 nums-tabular">–</b>
         </div>
 
         <!-- Dynamic Visual Progress Bar -->
@@ -508,7 +508,7 @@
 
         <div class="space-y-2 text-xs font-medium">
           <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
-            <span class="text-slate-500 dark:text-slate-400">Price − Down Payment</span>
+            <span class="text-slate-500 dark:text-slate-400">Leasing Amount</span>
             <b id="r1" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
           </div>
           <div class="flex justify-between py-1.5 border-b border-dashed border-slate-200 dark:border-slate-800">
@@ -535,23 +535,6 @@
           </div>
         </div>
       </div>
-
-      <!-- DIRECT LINK TO GMAP BANNER CARD -->
-      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" 
-         class="block p-4 rounded-xl bg-gradient-to-r from-brand-500/10 via-indigo-500/10 to-cyan-500/10 border border-brand-500/20 hover:border-brand-500/40 transition group">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="p-2 rounded-lg bg-brand-600 text-white shadow-sm">
-              <i data-lucide="map-pin" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <span class="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white">HNB Finance GMAP Portal</span>
-              <span class="block text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">Open main map application directly</span>
-            </div>
-          </div>
-          <i data-lucide="external-link" class="w-4 h-4 text-brand-600 dark:text-cyan-400 group-hover:translate-x-0.5 transition"></i>
-        </div>
-      </a>
 
     </div>
 
@@ -920,6 +903,8 @@ function calc(){
   $("r4").textContent=f(intr);
   $("r5").textContent=f(rmv);
   $("la").textContent=f(L);
+  const invV=INV[$("model").value];
+  $("ltv-pct").textContent = invV>0 ? (L/invV*100).toFixed(2)+"%" : "–";
 
   const n=v("yr")*12+v("mo");
   const rate=v("rate")/100;
@@ -952,9 +937,6 @@ document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",
 
 // Quick Down Payment Buttons
 $("btn-dp-min").onclick = () => { $("dp").value = MODELS[$("model").value][4]; calc(); };
-$("btn-dp-30").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2] * 0.30); calc(); };
-$("btn-dp-40").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2] * 0.40); calc(); };
-$("btn-dp-50").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2] * 0.50); calc(); };
 
 $("pro").addEventListener("change",()=>{ $("proa").value=$("pro").checked?PRO_DEF:0; calc(); });
 $("rmv").addEventListener("change",()=>{ $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0; calc(); });
