@@ -904,7 +904,8 @@ function calc(){
   $("r5").textContent=f(rmv);
   $("la").textContent=f(L);
   const invV=INV[$("model").value];
-  $("ltv-pct").textContent = invV>0 ? (maxLoan/invV*100).toFixed(2)+"%" : "–";
+  $("ltv").textContent = f(L);
+  $("ltv-pct").textContent = invV>0 ? (L/invV*100).toFixed(2)+"%" : "–";
 
   const n=v("yr")*12+v("mo");
   const rate=v("rate")/100;
