@@ -23,12 +23,12 @@
         },
         colors: {
           brand: {
-            50: '#eef6ff',
-            100: '#e0edff',
-            500: '#2563eb',
-            600: '#1d4ed8',
-            700: '#1e40af',
-            glow: '#3b82f6'
+            50: '#eef6fb',
+            100: '#d8eef8',
+            500: '#1676aa',
+            600: '#0f6b9e',
+            700: '#0a5480',
+            glow: '#1676aa'
           }
         }
       }
@@ -42,46 +42,228 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     -webkit-tap-highlight-color: transparent;
   }
-  
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(229, 231, 235, 0.8);
-  }
-  .dark .glass-card {
-    background: rgba(18, 24, 38, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* ============ HNB FINANCE GLASS THEME ============ */
+  :root{
+    --hnb-blue:#1676aa;
+    --hnb-dark:#0a5480;
+    --hnb-green:#6fa83a;
+    --hnb-tx:#14213d;
+    --hnb-mu:#5d6b82;
+    --hnb-bd:#dbe6ef;
+    --hnb-bd2:#8fa3b8;
   }
 
+  /* Body – HNB light gradient (overrides bg-slate-50) */
+  body {
+    background-color: #ffffff !important;
+    background-image:
+      radial-gradient(560px 380px at 8% 6%, rgba(37,170,225,0.22), transparent 70%),
+      radial-gradient(600px 400px at 94% 12%, rgba(127,182,63,0.20), transparent 70%),
+      radial-gradient(700px 460px at 50% 100%, rgba(37,170,225,0.14), transparent 70%) !important;
+    background-attachment: fixed !important;
+    color: #14213d;
+  }
+
+  html.dark, html.dark body {
+    background-color: #0f141d !important;
+    background-image:
+      radial-gradient(560px 380px at 8% 6%, rgba(37,170,225,0.16), transparent 70%),
+      radial-gradient(600px 400px at 94% 12%, rgba(127,182,63,0.14), transparent 70%),
+      radial-gradient(700px 460px at 50% 100%, rgba(37,170,225,0.10), transparent 70%) !important;
+    color: #e8ecf3;
+  }
+
+  /* ============ GLASS CARDS ============ */
+  .glass-card {
+    background: linear-gradient(150deg, rgba(255,255,255,0.86), rgba(255,255,255,0.58)) !important;
+    backdrop-filter: blur(16px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+    border: 1.5px solid rgba(255,255,255,0.95) !important;
+    box-shadow: 0 12px 32px rgba(14,88,128,0.14), 0 2px 6px rgba(15,23,42,0.06), inset 0 1px 0 #fff !important;
+  }
+  html.dark .glass-card {
+    background: linear-gradient(150deg, rgba(24,32,46,0.88), rgba(24,32,46,0.62)) !important;
+    border: 1.5px solid rgba(255,255,255,0.10) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+  }
+
+  /* Header – glass with green/blue side tints */
+  header.glass-card {
+    background: linear-gradient(120deg, rgba(37,170,225,0.16), rgba(255,255,255,0.86) 50%, rgba(127,182,63,0.16)) !important;
+    border-bottom: 1.5px solid rgba(255,255,255,0.95) !important;
+    box-shadow: 0 8px 26px rgba(14,88,128,0.14), inset 0 1px 0 #fff !important;
+  }
+  html.dark header.glass-card {
+    background: linear-gradient(120deg, rgba(37,170,225,0.10), rgba(24,32,46,0.86) 50%, rgba(127,182,63,0.10)) !important;
+    border-bottom: 1.5px solid rgba(255,255,255,0.08) !important;
+  }
+
+  /* Header logo gradient → HNB blue/green */
+  header .bg-gradient-to-tr {
+    background-image: linear-gradient(to top right, #1676aa, #0a5480, #6fa83a) !important;
+  }
+
+  /* ============ GLASS INPUTS ============ */
   .glass-input {
-    background: rgba(243, 244, 246, 0.8);
-    border: 1px solid rgba(209, 213, 219, 0.8);
+    background: linear-gradient(150deg, rgba(255,255,255,0.95), rgba(255,255,255,0.72)) !important;
+    border: 1.5px solid rgba(143,163,184,0.5) !important;
+    box-shadow: 0 3px 10px rgba(14,88,128,0.10), inset 0 1px 3px rgba(14,88,128,0.08) !important;
+    color: #14213d !important;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .dark .glass-input {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .glass-input:focus-within, .glass-input:focus {
+    border-color: #1676aa !important;
+    box-shadow: 0 0 0 4px rgba(22,118,170,0.20), 0 3px 10px rgba(14,88,128,0.12) !important;
+    outline: none;
   }
-  .glass-input:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  html.dark .glass-input {
+    background: linear-gradient(150deg, rgba(15,23,42,0.72), rgba(15,23,42,0.5)) !important;
+    border: 1.5px solid rgba(93,111,147,0.5) !important;
+    color: #e8ecf3 !important;
+  }
+  html.dark .glass-input:focus-within, html.dark .glass-input:focus {
+    border-color: #6c93ff !important;
+    box-shadow: 0 0 0 4px rgba(108,147,255,0.25) !important;
   }
 
+  /* ============ PRIMARY BLUE GLASS BUTTONS (PDF) ============ */
+  #t-pdf, #b-pdf, #b-pdf-mobile, #cs, #m-pdf-drawer {
+    position: relative !important;
+    isolation: isolate !important;
+    color: #fff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35) !important;
+    background:
+      linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+      linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90)) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
+    backdrop-filter: blur(14px) saturate(170%) !important;
+    border: 1.5px solid rgba(255,255,255,0.62) !important;
+    box-shadow:
+      0 8px 20px rgba(14,88,128,0.28),
+      0 2px 5px rgba(15,23,42,0.16),
+      inset 0 1.5px 0 rgba(255,255,255,0.75),
+      inset 0 -10px 16px rgba(255,255,255,0.08) !important;
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease !important;
+    overflow: hidden;
+  }
+  #t-pdf::before, #b-pdf::before, #b-pdf-mobile::before,
+  #cs::before, #m-pdf-drawer::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 52%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.03));
+    border-radius: inherit;
+    border-bottom-left-radius: 60% 28%;
+    border-bottom-right-radius: 60% 28%;
+    pointer-events: none;
+    z-index: -1;
+  }
+  #t-pdf:hover, #b-pdf:hover, #b-pdf-mobile:hover,
+  #cs:hover, #m-pdf-drawer:hover {
+    filter: brightness(1.08) saturate(1.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow:
+      0 14px 30px rgba(14,88,128,0.36),
+      0 3px 8px rgba(15,23,42,0.18),
+      inset 0 1.5px 0 rgba(255,255,255,0.85),
+      inset 0 -10px 16px rgba(255,255,255,0.10) !important;
+  }
+
+  /* Home links → blue glass light */
+  header a[href*="HNBFGMAP"], header a[title*="HNBF"] {
+    color: #1676aa !important;
+    background: linear-gradient(150deg, rgba(255,255,255,0.94), rgba(236,246,252,0.74)) !important;
+    border: 1.5px solid rgba(22,118,170,0.35) !important;
+    box-shadow: 0 4px 12px rgba(14,88,128,0.14), inset 0 1px 0 #fff !important;
+  }
+  html.dark header a[href*="HNBFGMAP"], html.dark header a[title*="HNBF"] {
+    color: #6c93ff !important;
+    background: linear-gradient(150deg, rgba(24,32,46,0.94), rgba(24,32,46,0.72)) !important;
+    border: 1.5px solid rgba(108,147,255,0.35) !important;
+  }
+
+  /* Secondary icon buttons (Theme / Reset / Menu) */
+  #t-theme, #t-reset, #m-drawer-toggle {
+    background: linear-gradient(150deg, rgba(255,255,255,0.92), rgba(236,246,252,0.72)) !important;
+    border: 1.5px solid rgba(143,163,184,0.5) !important;
+    box-shadow: 0 4px 10px rgba(14,88,128,0.10), inset 0 1px 0 #fff !important;
+    color: #14213d !important;
+  }
+  html.dark #t-theme, html.dark #t-reset, html.dark #m-drawer-toggle {
+    background: linear-gradient(150deg, rgba(24,32,46,0.92), rgba(24,32,46,0.72)) !important;
+    border: 1.5px solid rgba(93,111,147,0.5) !important;
+    color: #e8ecf3 !important;
+  }
+
+  /* Hero card glow – soften */
   .glow-box-blue {
-    box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.3);
+    box-shadow:
+      0 12px 32px rgba(14,88,128,0.18),
+      0 0 40px -10px rgba(22,118,170,0.30),
+      inset 0 1px 0 #fff !important;
   }
-  .dark .glow-box-blue {
-    box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.25);
+  html.dark .glow-box-blue {
+    box-shadow:
+      0 12px 32px rgba(0,0,0,0.4),
+      0 0 40px -10px rgba(108,147,255,0.30),
+      inset 0 1px 0 rgba(255,255,255,0.05) !important;
   }
 
-  /* Custom scrollbar */
+  /* ============ MAKE CHIPS (dynamically rendered) ============ */
+  #make-pills button:not(.bg-brand-600):not(.dark\:bg-cyan-500) {
+    background: linear-gradient(150deg, rgba(255,255,255,0.92), rgba(236,246,252,0.72)) !important;
+    border: 1.5px solid rgba(143,163,184,0.5) !important;
+    color: #14213d !important;
+    box-shadow: 0 2px 6px rgba(14,88,128,0.08) !important;
+  }
+  #make-pills button.bg-brand-600, #make-pills button.dark\:bg-cyan-500 {
+    background:
+      linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+      linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90)) !important;
+    color: #fff !important;
+    border: 1.5px solid rgba(255,255,255,0.62) !important;
+    box-shadow: 0 6px 14px rgba(14,88,128,0.26), inset 0 1px 0 rgba(255,255,255,0.7) !important;
+  }
+  html.dark #make-pills button:not(.bg-brand-600):not(.dark\:bg-cyan-500) {
+    background: linear-gradient(150deg, rgba(24,32,46,0.92), rgba(24,32,46,0.72)) !important;
+    border: 1.5px solid rgba(93,111,147,0.5) !important;
+    color: #e8ecf3 !important;
+  }
+  html.dark #make-pills button.bg-brand-600, html.dark #make-pills button.dark\:bg-cyan-500 {
+    background:
+      linear-gradient(150deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+      linear-gradient(160deg, rgba(37,170,225,0.95), rgba(22,118,170,0.90)) !important;
+    color: #fff !important;
+    border: 1.5px solid rgba(255,255,255,0.62) !important;
+  }
+
+  /* Quick DP / small secondary buttons inside cards */
+  #btn-dp-min {
+    background: linear-gradient(150deg, rgba(255,255,255,0.92), rgba(236,246,252,0.72)) !important;
+    border: 1.5px solid rgba(143,163,184,0.5) !important;
+    color: #14213d !important;
+    box-shadow: 0 2px 6px rgba(14,88,128,0.08) !important;
+  }
+  html.dark #btn-dp-min {
+    background: linear-gradient(150deg, rgba(24,32,46,0.92), rgba(24,32,46,0.72)) !important;
+    color: #e8ecf3 !important;
+  }
+
+  /* Mobile drawer nav links */
+  #m-drawer .glass-card {
+    background: linear-gradient(150deg, rgba(255,255,255,0.94), rgba(255,255,255,0.7)) !important;
+  }
+  html.dark #m-drawer .glass-card {
+    background: linear-gradient(150deg, rgba(24,32,46,0.94), rgba(24,32,46,0.72)) !important;
+  }
+
+  /* ============ SCROLLBARS ============ */
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
-  .dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
+  ::-webkit-scrollbar-thumb { background: rgba(22,118,170,0.35); border-radius: 9999px; }
+  .dark ::-webkit-scrollbar-thumb { background: rgba(108,147,255,0.35); }
 
   .nums-tabular { font-variant-numeric: tabular-nums; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
@@ -89,12 +271,12 @@
 </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 dark:bg-[#0b0f19] dark:text-slate-100 min-h-screen flex flex-col pb-28 lg:pb-8 selection:bg-brand-500 selection:text-white">
+<body class="min-h-screen flex flex-col pb-28 lg:pb-8 selection:bg-brand-500 selection:text-white">
 
 <!-- Header / Sticky Mobile-First Navbar -->
 <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-200 dark:border-slate-800/80">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-    
+
     <!-- Brand Logo & Main Title -->
     <div class="flex items-center gap-2.5">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[2px] shadow-lg shadow-blue-500/20 shrink-0">
@@ -114,26 +296,22 @@
 
     <!-- Desktop Navigation Actions -->
     <div class="hidden md:flex items-center gap-2">
-      <!-- 🏠 Home Link Button -->
-      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" 
-         class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-200/50 dark:bg-slate-800/60 hover:bg-slate-300/60 dark:hover:bg-slate-700/60 transition">
-        <i data-lucide="home" class="w-4 h-4 text-brand-600 dark:text-cyan-400"></i>
+      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener"
+         class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition">
+        <i data-lucide="home" class="w-4 h-4"></i>
         <span>Home (GMAP)</span>
       </a>
 
-      <!-- Theme Switcher -->
-      <button id="t-theme" class="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition" title="Toggle Light/Dark Theme">
+      <button id="t-theme" class="p-2.5 rounded-xl transition" title="Toggle Light/Dark Theme">
         <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
         <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-700"></i>
       </button>
 
-      <!-- Quick Reset -->
-      <button id="t-reset" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition">
+      <button id="t-reset" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition">
         <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
       </button>
 
-      <!-- Save PDF Button -->
-      <button id="t-pdf" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-md shadow-brand-500/20 transition hover:scale-[1.02] active:scale-[0.98]">
+      <button id="t-pdf" class="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-xs transition">
         <i data-lucide="file-text" class="w-4 h-4"></i>
         <span>Export PDF</span>
       </button>
@@ -141,14 +319,12 @@
 
     <!-- Mobile Navigation Trigger Controls -->
     <div class="flex items-center gap-1.5 md:hidden">
-      <!-- Mobile Home Direct Link -->
-      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" 
-         class="p-2.5 rounded-xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-cyan-400 border border-brand-200 dark:border-brand-500/20 active:scale-95 transition" title="HNBF GMAP Home">
+      <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener"
+         class="p-2.5 rounded-xl transition" title="HNBF GMAP Home">
         <i data-lucide="home" class="w-4 h-4"></i>
       </a>
 
-      <!-- Drawer Menu Toggle Button -->
-      <button id="m-drawer-toggle" class="p-2.5 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-200/60 dark:bg-slate-800/60 active:scale-95 transition" aria-label="Open Mobile Menu">
+      <button id="m-drawer-toggle" class="p-2.5 rounded-xl transition" aria-label="Open Mobile Menu">
         <i data-lucide="menu" class="w-5 h-5"></i>
       </button>
     </div>
@@ -157,7 +333,7 @@
 
 <!-- MOBILE DRAWER MENU OVERLAY -->
 <div id="m-drawer" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300">
-  <div class="fixed right-0 top-0 bottom-0 w-4/5 max-w-xs glass-card border-l border-slate-200 dark:border-slate-800 p-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+  <div class="fixed right-0 top-0 bottom-0 w-4/5 max-w-xs glass-card border-l border-slate-200 dark:border-slate-800 p-5 flex flex-col justify-between shadow-2xl">
     <div class="space-y-6">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
         <div class="flex items-center gap-2">
@@ -169,7 +345,6 @@
         </button>
       </div>
 
-      <!-- Navigation Links -->
       <div class="space-y-2">
         <a href="https://gmaphnbf.github.io/HNBFGMAP/" target="_blank" rel="noopener" class="flex items-center gap-3 w-full p-3 rounded-xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-cyan-400 font-bold text-sm">
           <i data-lucide="home" class="w-4 h-4"></i>
@@ -196,7 +371,6 @@
       </div>
     </div>
 
-    <!-- Drawer Footer -->
     <div class="pt-4 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
       <p class="font-semibold text-slate-600 dark:text-slate-300">HNB Finance PLC</p>
       <p class="text-[10px]">Smart Leasing Assistant v2.5</p>
@@ -211,7 +385,7 @@
     <!-- LEFT COLUMN: INPUT CONTROLS -->
     <div class="lg:col-span-7 space-y-4 sm:space-y-5">
 
-      <!-- SECTION 1: VEHICLE SELECTION CARD -->
+      <!-- SECTION 1: VEHICLE SELECTION -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
           <div class="flex items-center gap-2">
@@ -221,7 +395,6 @@
             <h2 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Vehicle Selection</h2>
           </div>
 
-          <!-- Brand New Checkbox Badge -->
           <label class="relative inline-flex items-center cursor-pointer select-none">
             <input type="checkbox" id="bn" checked class="sr-only peer">
             <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:after:border-slate-600 peer-checked:bg-brand-600"></div>
@@ -229,42 +402,34 @@
           </label>
         </div>
 
-        <!-- Make Selection Filter Pills -->
         <div>
           <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Select Brand / Make</label>
-          <div id="make-pills" class="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none touch-pan-x">
-            <!-- Dynamically Rendered Chips -->
-          </div>
+          <div id="make-pills" class="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none touch-pan-x"></div>
           <select id="make" class="sr-only"></select>
         </div>
 
-        <!-- Model Quick Search & Select -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
             <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Select Model</label>
             <span id="model-count" class="text-[10px] text-slate-400 font-medium"></span>
           </div>
-          
-          <!-- Live Filter Input for Mobile -->
+
           <div class="relative mb-2">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
               <i data-lucide="search" class="w-3.5 h-3.5"></i>
             </span>
-            <input type="text" id="model-search" placeholder="Quick filter model name..." 
-              class="glass-input w-full rounded-xl pl-9 pr-3 py-2 text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none">
+            <input type="text" id="model-search" placeholder="Quick filter model name..."
+              class="glass-input w-full rounded-xl pl-9 pr-3 py-2 text-xs font-medium placeholder-slate-400 focus:outline-none">
           </div>
 
           <div class="relative">
-            <select id="model" class="glass-input w-full rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white appearance-none cursor-pointer focus:outline-none">
-              <!-- Dynamically Populated -->
-            </select>
+            <select id="model" class="glass-input w-full rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold appearance-none cursor-pointer focus:outline-none"></select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
               <i data-lucide="chevron-down" class="w-4 h-4"></i>
             </div>
           </div>
         </div>
 
-        <!-- Vehicle Spec Cards Grid -->
         <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
           <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
             <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">Normal Price</span>
@@ -281,7 +446,7 @@
         </div>
       </div>
 
-      <!-- SECTION 2: DOWN PAYMENT HIGHLIGHT CARD -->
+      <!-- SECTION 2: DOWN PAYMENT -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5 border-l-4 border-l-brand-600 dark:border-l-cyan-400">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -295,32 +460,26 @@
           </div>
           <div class="text-right">
             <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Min. Required</span>
-            <div id="mindp-badge" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/50 inline-block">
-              –
-            </div>
+            <div id="mindp-badge" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/50 inline-block">–</div>
           </div>
         </div>
 
-        <!-- Down Payment Input Field -->
         <div class="relative">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-xs font-bold text-slate-400">Rs.</span>
-          <input type="number" inputmode="decimal" id="dp" placeholder="Enter Down Payment amount..." 
-            class="glass-input w-full rounded-xl pl-11 pr-4 py-3 text-base font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none">
+          <input type="number" inputmode="decimal" id="dp" placeholder="Enter Down Payment amount..."
+            class="glass-input w-full rounded-xl pl-11 pr-4 py-3 text-base font-bold placeholder-slate-400 focus:outline-none">
         </div>
 
-        <!-- Quick Percentage Selector Buttons -->
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           <span class="text-[10px] text-slate-500 font-semibold mr-1 shrink-0">Quick DP:</span>
-          <button id="btn-dp-min" class="px-2.5 py-1.5 text-xs font-bold rounded-lg bg-slate-200/70 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition shrink-0">Min DP</button>
+          <button id="btn-dp-min" class="px-2.5 py-1.5 text-xs font-bold rounded-lg transition shrink-0">Min DP</button>
         </div>
 
-        <!-- LTV (Leasing Amount / New Invoice) -->
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
           <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">LTV <span class="font-medium text-[10px]">(Max Exposure / New Invoice)</span></span>
           <b id="ltv-pct" class="text-sm font-bold text-brand-600 dark:text-cyan-400 nums-tabular">–</b>
         </div>
 
-        <!-- Dynamic Visual Progress Bar -->
         <div class="space-y-1 pt-1">
           <div class="flex justify-between text-[10px] font-medium text-slate-500">
             <span>DP Coverage</span>
@@ -331,14 +490,13 @@
           </div>
         </div>
 
-        <!-- Validation Banner for DP -->
         <div id="dpmsg" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
           <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
           <span id="dpmsg-text"></span>
         </div>
       </div>
 
-      <!-- SECTION 3: OFFERS, INSURANCE & COMMISSIONS -->
+      <!-- SECTION 3: ADD-ONS -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
         <div class="flex items-center gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800">
           <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
@@ -348,7 +506,6 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <!-- Promotional Offer -->
           <div class="space-y-1.5 p-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-800">
             <div class="flex items-center justify-between">
               <label class="inline-flex items-center gap-2 cursor-pointer">
@@ -359,11 +516,10 @@
             </div>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
-              <input type="number" inputmode="decimal" id="proa" value="6000" class="glass-input w-full rounded-lg pl-9 pr-3 py-2 text-xs font-bold text-slate-900 dark:text-white">
+              <input type="number" inputmode="decimal" id="proa" value="6000" class="glass-input w-full rounded-lg pl-9 pr-3 py-2 text-xs font-bold">
             </div>
           </div>
 
-          <!-- RMV Fee -->
           <div class="space-y-1.5 p-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-800">
             <div class="flex items-center justify-between">
               <label class="inline-flex items-center gap-2 cursor-pointer">
@@ -374,12 +530,11 @@
             </div>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
-              <input type="number" inputmode="decimal" id="rmva" value="0" class="glass-input w-full rounded-lg pl-9 pr-3 py-2 text-xs font-bold text-slate-900 dark:text-white">
+              <input type="number" inputmode="decimal" id="rmva" value="0" class="glass-input w-full rounded-lg pl-9 pr-3 py-2 text-xs font-bold">
             </div>
           </div>
         </div>
 
-        <!-- Insurance Input -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
             <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
@@ -389,29 +544,27 @@
           </div>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
-            <input type="number" inputmode="decimal" id="ins" placeholder="Enter insurance premium..." 
-              class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+            <input type="number" inputmode="decimal" id="ins" placeholder="Enter insurance premium..."
+              class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold">
           </div>
           <div id="insmsg" class="hidden text-xs text-rose-500 font-medium flex items-center gap-1 mt-1">
             <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Insurance amount is required.
           </div>
         </div>
 
-        <!-- Introducer Commission Input -->
         <div class="space-y-1.5">
           <label id="intrl" class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
             Introducer Commission (Max 4% of New Invoice)
           </label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
-            <input type="number" inputmode="decimal" id="intr" value="0" min="0" 
-              class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+            <input type="number" inputmode="decimal" id="intr" value="0" min="0" class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold">
           </div>
           <div id="intrmsg" class="hidden p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-400 text-xs font-medium"></div>
         </div>
       </div>
 
-      <!-- SECTION 4: TENURE & INTEREST RATE -->
+      <!-- SECTION 4: RATE & TENURE -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
         <div class="flex items-center gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800">
           <div class="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
@@ -421,31 +574,26 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Interest Rate Input -->
           <div class="space-y-1 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Annual Rate (%)</label>
             <div class="relative">
-              <input type="number" inputmode="decimal" id="rate" value="23" step="0.01" 
-                class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+              <input type="number" inputmode="decimal" id="rate" value="23" step="0.01" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold">
               <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold text-slate-400">%</span>
             </div>
           </div>
 
-          <!-- Tenure Selection Grid -->
           <div class="space-y-1 sm:col-span-2">
             <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">Lease Duration</label>
             <div class="grid grid-cols-2 gap-2">
               <div class="relative">
-                <select id="yr" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white appearance-none cursor-pointer">
-                </select>
+                <select id="yr" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer"></select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
                   <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                 </div>
               </div>
 
               <div class="relative">
-                <select id="mo" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white appearance-none cursor-pointer">
-                </select>
+                <select id="mo" class="glass-input w-full rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer"></select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
                   <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                 </div>
@@ -454,7 +602,6 @@
           </div>
         </div>
 
-        <!-- Rate Validation Warning -->
         <div id="ratemsg" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-xs font-medium flex items-center gap-2">
           <i data-lucide="shield-alert" class="w-4 h-4 shrink-0"></i>
           <span id="ratemsg-text"></span>
@@ -462,12 +609,10 @@
       </div>
     </div>
 
-    <!-- RIGHT COLUMN: REAL-TIME SUMMARY & CALCULATED RESULTS -->
+    <!-- RIGHT COLUMN: SUMMARY -->
     <div class="lg:col-span-5 space-y-4 sm:space-y-5">
 
-      <!-- HERO INSTALLMENT CARD -->
-      <div class="glass-card rounded-2xl p-5 sm:p-6 shadow-xl border border-brand-500/20 glow-box-blue bg-gradient-to-b from-white/90 to-brand-50/40 dark:from-slate-900/90 dark:to-slate-900/60 relative overflow-hidden">
-        
+      <div class="glass-card rounded-2xl p-5 sm:p-6 shadow-xl border border-brand-500/20 glow-box-blue relative overflow-hidden">
         <div class="absolute -top-12 -right-12 w-36 h-36 bg-brand-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
         <div class="relative z-10 space-y-4">
@@ -481,25 +626,20 @@
             </span>
           </div>
 
-          <!-- Monthly Installment Amount -->
           <div class="py-1 text-center lg:text-left">
-            <div id="inst" class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight nums-tabular">
-              –
-            </div>
+            <div id="inst" class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight nums-tabular">–</div>
             <div id="tot" class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
               Select options to calculate
             </div>
           </div>
 
-          <!-- Primary Action Button: Save PDF -->
-          <button id="b-pdf" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 via-indigo-600 to-cyan-500 hover:from-brand-500 hover:to-cyan-400 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-500/25 transition hover:shadow-brand-500/40 flex items-center justify-center gap-2 group active:scale-[0.99]">
+          <button id="b-pdf" class="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 group">
             <i data-lucide="file-check" class="w-4 h-4 group-hover:scale-110 transition"></i>
             <span>Generate PDF Quotation</span>
           </button>
         </div>
       </div>
 
-      <!-- DETAILED COST BREAKDOWN CARD -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5">
         <h3 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm pb-2 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
           <span>Loan Facility Breakdown</span>
@@ -528,35 +668,32 @@
             <b id="r5" class="text-slate-800 dark:text-slate-200 nums-tabular">–</b>
           </div>
 
-          <!-- Total Facility / Leasing Amount -->
           <div class="flex justify-between items-center pt-2 text-xs sm:text-sm font-bold">
             <span class="text-slate-900 dark:text-white">Total Leasing Amount</span>
             <b id="la" class="text-brand-600 dark:text-cyan-400 text-sm sm:text-base nums-tabular">–</b>
           </div>
         </div>
       </div>
-
     </div>
-
   </div>
 </main>
 
-<!-- MOBILE FIXED BOTTOM ACTION BAR -->
+<!-- MOBILE FIXED BOTTOM BAR -->
 <div class="fixed bottom-0 inset-x-0 z-40 lg:hidden glass-card border-t border-slate-200 dark:border-slate-800 p-3 px-4 shadow-2xl">
   <div class="max-w-md mx-auto flex items-center justify-between gap-3">
     <div>
       <span class="block text-[9px] uppercase font-bold text-slate-400 tracking-wider">Monthly Installment</span>
       <b id="bi" class="text-base sm:text-lg font-black text-brand-600 dark:text-cyan-400 nums-tabular">–</b>
     </div>
-    <button id="b-pdf-mobile" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-brand-500/20 flex items-center gap-1.5 active:scale-95 transition">
+    <button id="b-pdf-mobile" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5">
       <i data-lucide="file-text" class="w-4 h-4"></i> Save PDF
     </button>
   </div>
 </div>
 
-<!-- MODAL: CUSTOMER DETAILS FOR PDF EXPORT -->
+<!-- MODAL: CUSTOMER DETAILS -->
 <div id="ov" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4">
-  <div class="glass-card w-full max-w-md rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+  <div class="glass-card w-full max-w-md rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
       <div class="flex items-center gap-2">
         <div class="p-2 rounded-lg bg-brand-500/10 text-brand-600 dark:text-cyan-400">
@@ -572,29 +709,25 @@
     <div class="space-y-3">
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Customer Name *</label>
-        <input type="text" id="cn" autocomplete="name" placeholder="e.g. Perera A.B.C." 
-          class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+        <input type="text" id="cn" autocomplete="name" placeholder="e.g. Perera A.B.C." class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold">
       </div>
 
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">NIC Number *</label>
-        <input type="text" id="cnic" maxlength="12" autocapitalize="characters" placeholder="e.g. 199012345678 or 901234567V" 
-          class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+        <input type="text" id="cnic" maxlength="12" autocapitalize="characters" placeholder="e.g. 199012345678 or 901234567V" class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold uppercase tracking-wider">
       </div>
 
-      <!-- Modal Error Display -->
       <div id="cerr" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
         <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
         <span id="cerr-text"></span>
       </div>
     </div>
 
-    <!-- Modal Action Buttons -->
     <div class="flex items-center gap-2 pt-2">
       <button id="cx-btn" class="flex-1 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition">
         Cancel
       </button>
-      <button id="cs" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-brand-500/20 hover:scale-[1.01] transition flex items-center justify-center gap-1.5">
+      <button id="cs" class="flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5">
         <i data-lucide="download" class="w-4 h-4"></i> Download PDF
       </button>
     </div>
@@ -603,7 +736,6 @@
 
 <!-- JAVASCRIPT LOGIC -->
 <script>
-// ===== PRESERVED DATA ARRAYS =====
 const MODELS=[
 ["YAMAHA","RAY ZR DISK 113",689900,482930,206970],
 ["YAMAHA","RAY ZR DISK 113 DIGITAL",719900,503930,215970],
@@ -713,7 +845,6 @@ const INV=[1207900,1260900,1445900,1496900,1872900,2098900,2152900,2257900,25899
 
 const PINS=[22932,23596,26029,26709,31628,34585,35301,36672,41004,45014,24514,25433,26584,23131,null,23728,21540,23364,16600,27942,29299,32649,47014,35206,58554,59371,41134,20479,23727,23636,26248,25084,28136,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];
 
-// Helpers
 const $=id=>document.getElementById(id);
 const f=n=>"Rs. "+(Math.round(n*100)/100).toLocaleString("en-LK",{minimumFractionDigits:2,maximumFractionDigits:2});
 const v=id=>parseFloat($(id).value)||0;
@@ -723,7 +854,6 @@ const PRO_DEF=6000;
 
 lucide.createIcons();
 
-// Setup Makes & Filter Chips
 const makes=[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>{
   const o=["TVS","BAJAJ","YAMAHA","HERO","HONDA"],a=o.indexOf(x),b=o.indexOf(y);
   return (a<0?99:a)-(b<0?99:b);
@@ -732,12 +862,12 @@ const makes=[...new Set(MODELS.map(m=>m[0]))].sort((x,y)=>{
 const makeContainer = $("make-pills");
 makes.forEach((k, idx) => {
   $("make").add(new Option(k,k));
-  
+
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = `px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-    idx === 0 
-      ? "bg-brand-600 text-white shadow-md shadow-brand-500/20 dark:bg-cyan-500 dark:text-slate-950" 
+    idx === 0
+      ? "bg-brand-600 text-white shadow-md shadow-brand-500/20 dark:bg-cyan-500 dark:text-slate-950"
       : "bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700"
   }`;
   btn.textContent = k;
@@ -782,7 +912,7 @@ function fillModels(){
   const s=$("model");
   const filterText = ($("model-search").value || "").toLowerCase().trim();
   s.innerHTML="";
-  
+
   let count = 0;
   MODELS.forEach((m,i)=>{
     if(m[0]===$("make").value) {
@@ -818,13 +948,11 @@ $("make").addEventListener("change", () => {
 $("model").addEventListener("change", setIns);
 $("model-search").addEventListener("input", fillModels);
 
-// Tenure options
 $("yr").add(new Option("Select Years", ""));
 $("mo").add(new Option("Select Months", ""));
 for(let y=1; y<=5; y++) $("yr").add(new Option(y+" Year"+(y>1?"s":""), y));
 for(let m=1; m<=11; m++) $("mo").add(new Option(m+" Month"+(m>1?"s":""), m));
 
-// ===== MAIN CALCULATION LOGIC =====
 function calc(){
   if(!$("model").value) return;
   const m=MODELS[$("model").value], price=m[2], maxLoan=m[3];
@@ -936,18 +1064,15 @@ function calc(){
 
 document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",calc));
 
-// Quick Down Payment Buttons
 $("btn-dp-min").onclick = () => { $("dp").value = MODELS[$("model").value][4]; calc(); };
 
 $("pro").addEventListener("change",()=>{ $("proa").value=$("pro").checked?PRO_DEF:0; calc(); });
 $("rmv").addEventListener("change",()=>{ $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0; calc(); });
 
-// Theme Switching Logic
 const toggleTheme = () => document.documentElement.classList.toggle('dark');
 $("t-theme").onclick = toggleTheme;
 $("m-theme-drawer").onclick = toggleTheme;
 
-// Mobile Drawer Interactivity
 const drawer = $("m-drawer");
 const openDrawer = () => drawer.classList.remove("hidden");
 const closeDrawer = () => drawer.classList.add("hidden");
@@ -956,14 +1081,12 @@ $("m-drawer-toggle").onclick = openDrawer;
 $("m-drawer-close").onclick = closeDrawer;
 drawer.onclick = (e) => { if(e.target === drawer) closeDrawer(); };
 
-// Reset Handlers
 const doReset = () => {
   if(confirm("Reset all calculator inputs?")) location.reload();
 };
 $("t-reset").onclick = doReset;
 $("m-reset-drawer").onclick = () => { closeDrawer(); doReset(); };
 
-// PDF Save Trigger
 function openSaveModal(){
   calc();
   const R=window.R;
@@ -995,7 +1118,6 @@ const closeModal = () => $("ov").classList.add("hidden");
 $("cx").onclick = closeModal;
 $("cx-btn").onclick = closeModal;
 
-// Export PDF Document
 $("cs").onclick = () => {
   const name = $("cn").value.trim();
   const nic = $("cnic").value.trim().toUpperCase();
@@ -1101,7 +1223,6 @@ function makePDF(name, nic){
   d.save((name+"_"+nic).replace(/[^A-Za-z0-9]+/g,"_")+"_Lease_Quotation.pdf");
 }
 
-// Initial calculation run
 calc();
 </script>
 </body>
