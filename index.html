@@ -622,7 +622,7 @@
         </div>
 
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">LTV <span class="font-medium text-[10px]">(Total Leasing / Bike Price)</span></span>
+          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">LTV</span>
           <b id="ltv-pct" class="text-sm font-bold text-brand-600 dark:text-cyan-400 nums-tabular">–</b>
         </div>
 
@@ -786,6 +786,11 @@
             </div>
           </div>
 
+          <div id="inst-note" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-400 text-[11px] font-medium flex items-start gap-2">
+            <i data-lucide="info" class="w-4 h-4 shrink-0"></i>
+            <span id="inst-note-text"></span>
+          </div>
+
           <button id="b-pdf" class="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 group">
             <i data-lucide="file-check" class="w-4 h-4 group-hover:scale-110 transition"></i>
             <span>Generate PDF Quotation</span>
@@ -846,7 +851,7 @@
 
 <!-- MODAL -->
 <div id="ov" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4">
-  <div class="glass-card w-full max-w-md rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+  <div class="glass-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
       <div class="flex items-center gap-2">
         <div class="p-2 rounded-lg bg-brand-500/10 text-brand-600 dark:text-cyan-400">
@@ -868,6 +873,22 @@
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">NIC Number *</label>
         <input type="text" id="cnic" maxlength="12" autocapitalize="characters" placeholder="e.g. 199012345678 or 901234567V" class="glass-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold uppercase tracking-wider">
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Attach Photo <span class="font-medium text-slate-400">(optional - NIC, documents etc.)</span></label>
+        <div class="flex gap-2">
+          <button type="button" id="ph-cam" class="intro-chip flex-1 flex items-center justify-center gap-1.5">
+            <i data-lucide="camera" class="w-4 h-4"></i> Take Photo
+          </button>
+          <button type="button" id="ph-gal" class="intro-chip flex-1 flex items-center justify-center gap-1.5">
+            <i data-lucide="image" class="w-4 h-4"></i> Gallery
+          </button>
+        </div>
+        <input type="file" id="ph-in-cam" accept="image/*" capture="environment" class="hidden">
+        <input type="file" id="ph-in-gal" accept="image/*" multiple class="hidden">
+        <div id="ph-list" class="flex flex-wrap gap-2 mt-2"></div>
+        <p class="text-[10px] text-slate-400 mt-1">Attached photos are added to the end of the PDF (max 6).</p>
       </div>
 
       <div id="cerr" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
@@ -1219,7 +1240,7 @@ function calc(){
   $("r4").textContent=f(intr);
   $("r5").textContent=f(rmv);
   $("la").textContent=f(L);
-  $("ltv-pct").textContent = price>0 ? (L/price*100).toFixed(2)+"%" : "–";
+  $("ltv-pct").textContent = price>0 ? (base/price*100).toFixed(2)+"%" : "–";   // LTV = Leasing Amount (Price - DP) / Bike Price x 100
 
   const n=v("yr")*12+v("mo");
   const rate=v("rate")/100;
@@ -1244,6 +1265,18 @@ function calc(){
   }
 
   $("bi").textContent = $("inst").textContent;
+
+  const notAdded=[];
+  if(dpEmpty) notAdded.push("Down Payment");
+  if(!(pro>0)) notAdded.push("Pro. Offer");
+  if(!(rmv>0)) notAdded.push("RMV Fee");
+  if(!(intr>0)) notAdded.push("Introducer Commission");
+  if(notAdded.length && !insMiss){
+    $("inst-note-text").textContent="Reminder: "+notAdded.join(", ")+" not added. If applicable, add them - the monthly installment will change.";
+    $("inst-note").classList.remove("hidden");
+  } else {
+    $("inst-note").classList.add("hidden");
+  }
 
   window.R={m,price,bn:$("bn").checked,dp,base,pro,ins,intr,rmv,L,rate:v("rate"),yr:v("yr"),mo:v("mo"),n,pay,insMiss,rateErr:!!rmsg,maxLoan,minDp};
 }
@@ -1356,6 +1389,80 @@ $("cs").onclick = () => {
   closeModal();
 };
 
+/* ==================== PHOTO ATTACHMENTS ==================== */
+let photos=[];
+const MAX_PHOTOS=6;
+
+function readPhoto(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onerror=rej;
+    fr.onload=()=>{
+      const img=new Image();
+      img.onerror=rej;
+      img.onload=()=>{
+        const MAX=1600;
+        let w=img.naturalWidth, h=img.naturalHeight;
+        const sc=Math.min(1,MAX/Math.max(w,h));
+        w=Math.round(w*sc); h=Math.round(h*sc);
+        const c=document.createElement("canvas"); c.width=w; c.height=h;
+        const x=c.getContext("2d");
+        x.fillStyle="#fff"; x.fillRect(0,0,w,h);
+        x.drawImage(img,0,0,w,h);
+        res({data:c.toDataURL("image/jpeg",0.8),w,h});
+      };
+      img.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+function renderPhotos(){
+  const box=$("ph-list");
+  box.innerHTML="";
+  photos.forEach((p,i)=>{
+    const wrap=document.createElement("div");
+    wrap.className="relative";
+    const im=document.createElement("img");
+    im.src=p.data; im.alt="Photo "+(i+1);
+    im.className="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-700";
+    const x=document.createElement("button");
+    x.type="button"; x.textContent="✕"; x.title="Remove";
+    x.className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center shadow";
+    x.onclick=()=>{ photos.splice(i,1); renderPhotos(); };
+    wrap.appendChild(im); wrap.appendChild(x);
+    box.appendChild(wrap);
+  });
+}
+
+async function addPhotos(fileList){
+  const er=$("cerr");
+  for(const file of Array.from(fileList||[])){
+    if(!file.type.startsWith("image/")) continue;
+    if(photos.length>=MAX_PHOTOS){
+      er.classList.remove("hidden");
+      $("cerr-text").textContent="Maximum "+MAX_PHOTOS+" photos can be attached.";
+      break;
+    }
+    try{ photos.push(await readPhoto(file)); }
+    catch(e){
+      er.classList.remove("hidden");
+      $("cerr-text").textContent="Could not read that photo. Please try another image (JPG/PNG).";
+    }
+  }
+  renderPhotos();
+}
+
+$("ph-cam").onclick=()=>$("ph-in-cam").click();
+$("ph-gal").onclick=()=>$("ph-in-gal").click();
+["ph-in-cam","ph-in-gal"].forEach(id=>{
+  $(id).addEventListener("change",async e=>{
+    $("cerr").classList.add("hidden");
+    await addPhotos(e.target.files);
+    e.target.value="";
+  });
+});
+
 function makePDF(name, nic){
   const R=window.R;
   const d=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
@@ -1431,6 +1538,18 @@ function makePDF(name, nic){
   d.setFontSize(8);
   d.setTextColor(148, 163, 184);
   d.text("Generated electronically via HNB Finance Lease Pro system. Subject to credit appraisal.", L, y);
+
+  photos.forEach((p,i)=>{
+    d.addPage();
+    d.setFont("helvetica","bold");
+    d.setFontSize(12);
+    d.setTextColor(15, 23, 42);
+    d.text("Attached Photo "+(i+1)+" of "+photos.length+" - "+name+" ("+nic+")", L, 20);
+    const maxW=E-L, maxH=245;
+    let w=maxW, h=w*p.h/p.w;
+    if(h>maxH){ h=maxH; w=h*p.w/p.h; }
+    d.addImage(p.data,"JPEG",L+(maxW-w)/2,28,w,h);
+  });
 
   d.save((name+"_"+nic).replace(/[^A-Za-z0-9]+/g,"_")+"_Lease_Quotation.pdf");
 }
