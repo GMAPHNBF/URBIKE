@@ -366,6 +366,25 @@
   ::-webkit-scrollbar-thumb { background: rgba(22,118,170,0.35); border-radius: 9999px; }
   .dark ::-webkit-scrollbar-thumb { background: rgba(108,147,255,0.35); }
 
+  .intro-chip{
+    padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 10px; cursor: pointer;
+    background: linear-gradient(150deg, rgba(255,255,255,0.92), rgba(236,246,252,0.72));
+    border: 1.5px solid rgba(143,163,184,0.5); color: #14213d;
+    box-shadow: 0 2px 6px rgba(14,88,128,0.08);
+    transition: all .18s ease;
+  }
+  html.dark .intro-chip{
+    background: linear-gradient(150deg, rgba(24,32,46,0.92), rgba(24,32,46,0.72));
+    border-color: rgba(93,111,147,0.5); color: #e8ecf3;
+  }
+  .intro-chip.active, html.dark .intro-chip.active{
+    color: #fff; border: 1.5px solid rgba(255,255,255,0.62);
+    background:
+      linear-gradient(150deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 60%),
+      linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+    box-shadow: 0 6px 14px rgba(14,88,128,0.26);
+  }
+
   .nums-tabular { font-variant-numeric: tabular-nums; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
   .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
@@ -561,14 +580,10 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 pt-1">
           <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
-            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">Normal Price</span>
+            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">Bike Price</span>
             <span id="price" class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white nums-tabular">–</span>
-          </div>
-          <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
-            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">New Invoice</span>
-            <span id="inv" class="text-xs sm:text-sm font-bold text-brand-600 dark:text-cyan-400 nums-tabular">–</span>
           </div>
           <div class="p-2.5 sm:p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
             <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">Max Exposure</span>
@@ -607,7 +622,7 @@
         </div>
 
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">LTV <span class="font-medium text-[10px]">(Max Exposure / New Invoice)</span></span>
+          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">LTV <span class="font-medium text-[10px]">(Total Leasing / Bike Price)</span></span>
           <b id="ltv-pct" class="text-sm font-bold text-brand-600 dark:text-cyan-400 nums-tabular">–</b>
         </div>
 
@@ -685,12 +700,20 @@
 
         <div class="space-y-1.5">
           <label id="intrl" class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
-            Introducer Commission (Max 4% of New Invoice)
+            Introducer Commission (Max 4% of Bike Price)
           </label>
+          <div id="intro-chips" class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[10px] text-slate-500 font-semibold mr-1 shrink-0">Quick:</span>
+            <button type="button" data-p="0" class="intro-chip">None</button>
+            <button type="button" data-p="3" class="intro-chip">3%</button>
+            <button type="button" data-p="4" class="intro-chip">4%</button>
+            <span class="text-[10px] text-slate-400 font-medium">or type an amount below</span>
+          </div>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs text-slate-400">Rs.</span>
             <input type="number" inputmode="decimal" id="intr" value="0" min="0" class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm font-bold">
           </div>
+          <div id="intr-pct" class="text-[10px] font-medium text-slate-500 dark:text-slate-400"></div>
           <div id="intrmsg" class="hidden p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-400 text-xs font-medium"></div>
         </div>
       </div>
@@ -866,114 +889,114 @@
 
 <!-- JAVASCRIPT -->
 <script>
+// [make, model, bike price, insurance premium (null = enter manually)]
 const MODELS=[
-["YAMAHA","RAY ZR DISK 113",689900,482930,206970],
-["YAMAHA","RAY ZR DISK 113 DIGITAL",719900,503930,215970],
-["YAMAHA","RAY ZR 125 DISH",824900,577430,247470],
-["YAMAHA","RAY ZR STREET RALLY 125H",854900,598430,256470],
-["YAMAHA","FZ VERSION 2",1069900,748930,320970],
-["YAMAHA","FZ VERSION 4.0",1198900,839230,359670],
-["YAMAHA","FZ S F I NEW",1229900,860930,368970],
-["YAMAHA","FZ VERSION 4.0 HYBID",1289900,902930,386970],
-["YAMAHA","MT 15 VERSION 2.0",1479900,1035930,443970],
-["YAMAHA","R 15 VERSION 4.0F1",1654900,1158430,496470],
-["TVS","NTORQ - DISH FI",759000,531300,227700],
-["TVS","NTORQ - RASE EDITION",799000,559300,239700],
-["TVS","NTORQ - XP",849000,594300,254700],
-["TVS","NTORQ-DRUM",699000,489300,209700],
-["TVS","NTORQ - DISH CARB",699000,489300,209700],
-["TVS","JUPITOR",724000,506800,217200],
-["TVS","SPORT 110",629000,440300,188700],
-["TVS","RIDER",709000,496300,212700],
-["TVS","XL 100",419000,293300,125700],
-["TVS","APACHE 160",909000,636300,272700],
-["TVS","APACHE 160 4V",969000,678300,290700],
-["TVS","APACHE 200 4V",1115000,780500,334500],
-["TVS","IQUBE 3.5KWH",849000,594300,254700],
-["TVS","OBITA / EV",599000,419300,179700],
-["TVS","APACHE 310 RTR",2250000,1400000,850000],
-["TVS","APACHE 310 RR",2300000,1450000,850000],
-["TVS","RONIN 225",1499000,950000,549000],
-["HERO","DELUXE HF 100",585400,409780,175620],
-["HERO","XOOM COMBAT",724900,507430,217470],
-["HERO","XOOM 110 EFI",720900,504630,216270],
-["HERO","XOOM 125",834900,584430,250470],
-["HERO","XTREME",784400,549080,235320],
-["HERO","HUNK 160R",917400,642180,275220],
-["YADEA","T5 L",549950,359000,190950],
-["YADEA","RUBIN S",399950,250000,149950],
-["YADEA","RUBIN L",459950,317000,142950],
-["YADEA","M 6",429950,250000,179950],
-["YADEA","EPOC",664950,450000,214950],
-["YADEA","COOLJOY",254950,160000,94950],
-["SENARO","GN 125",695900,485000,210900],
-["SENARO","DAYUN BOXTER",597900,410000,187900],
-["SENARO","CLICK 150",895900,550000,345900],
-["RANO MOTO","HUNTER",848000,410000,438000],
-["RANO MOTO","HUNTER DL",998000,410000,588000],
-["RANO MOTO","ACTIVE 100 (SRI LANKAN)",498000,254000,244000],
-["RANO MOTO","MOPED SUPER (LT)",498000,254000,244000],
-["RANO MOTO","MOPED SUPER",428000,215000,213000],
-["RANO MOTO","MOPED SUPER (SRI LANKAN)",328000,165000,163000],
-["RANO MOTO","GN 125 H",888000,467000,421000],
-["RANO MOTO","GN 125",628000,300000,328000],
-["RANO MOTO","GN 125 SP",998000,510000,488000],
-["RANO MOTO","FLASH (CHINA)",748000,350000,398000],
-["RANO MOTO","FLASH (SRI LANKAN)",498000,240000,258000],
-["RANO MOTO","FLASH DLX",798000,400000,398000],
-["SUZUKI","AVENIS",769900,450000,319900],
-["BAJAJ","CT ES 100",599950,263980,335970],
-["BAJAJ","DISCOVER 125",729950,303980,425970],
-["BAJAJ","CHETAK 3503",699950,342780,357170],
-["BAJAJ","PLATINA 100 ES",639950,279980,359970],
-["BAJAJ","PULSAR NS 125",795950,342380,453570],
-["BAJAJ","PULSAR N 125",744950,317980,426970],
-["BAJAJ","PULSAR N160",894950,389980,504970],
-["BAJAJ","PULSAR N160 PREMIUM",979950,399980,579970],
-["BAJAJ","PULSAR NS 200",1124950,465980,658970],
-["BAJAJ","PULSAR RS 200",1239950,519980,719970],
-["BAJAJ","PULSAR NS 400Z",2339950,935980,1403970],
-["BAJAJ","KTM DUKE 160",1399950,595980,803970],
-["BAJAJ","KTM DUKE 250",1774950,733980,1040970],
-["BAJAJ","KTM ADVENTURE 390X",2799950,1119980,1679970],
-["I'MA","MANA",524900,209960,314940],
-["I'MA","LIBERTY",439900,175960,263940],
-["I'MA","LIBERTY ULTRA",499900,280000,219900],
-["I'MA","BREEZY",384900,153960,230940],
-["I'MA","ARIA",349900,139960,209940],
-["I'MA","MAWARIK",574900,229960,344940],
-["HONDA","DIO STD - 110",690000,276000,414000],
-["HONDA","DIO DLX - 110",740000,296000,444000],
-["HONDA","DIO STD - 125",790000,316000,474000],
-["HONDA","DIO DLX - 125",840000,336000,504000],
-["HONDA","SP 125",770000,308000,462000],
-["HONDA","SHINE 125",715000,286000,429000],
-["TMR","COLA 5",274500,109800,164700],
-["TMR","N 09",449500,179800,269700],
-["TMR","ZL PLUS",534500,300000,234500],
-["TMR","MNK 3 PLUS",544500,310000,234500],
-["TMR","MQQ 6",399500,159800,239700],
-["TMR","S 18",449500,179800,269700],
-["TMR","XGW",344500,137800,206700],
-["TMR","G 18 PLUS",549500,315000,234500],
-["TMR","MYC PLUS",444500,250000,194500],
-["TMR","G 18",519500,207800,311700],
-["DYNO","DRV 125 EFI",695000,278000,417000],
-["DYNO","VORTEX",1090000,436000,654000],
-["SOOBOO","PARIS",330000,132000,198000],
-["SOOBOO","T 33",395000,158000,237000],
-["SOOBOO","GT",445000,178000,267000],
-["SOOBOO","TANK",515000,206000,309000],
-["SOOBOO","KB 1",382500,153000,229500],
-["SOOBOO","EX008",495000,198000,297000],
-["SOOBOO","T16",470000,188000,282000],
-["HUAIHAI BY KAPLA","XYS1 MINI BIKE",229900,91960,137940],
-["HUAIHAI BY KAPLA","SCOOTER ZL 9",389900,155960,233940]
+["YAMAHA","RAY ZR DISK 113",689900,19258],
+["YAMAHA","RAY ZR DISK 113 DIGITAL",719900,18607],
+["YAMAHA","RAY ZR 125 DISH",824900,20277],
+["YAMAHA","RAY ZR STREET RALLY 125H",854900,20253],
+["YAMAHA","FZ VERSION 2",1069900,24171],
+["YAMAHA","FZ VERSION 4.0",1198900,26222],
+["YAMAHA","FZ S F I NEW",1229900,26714],
+["YAMAHA","FZ VERSION 4.0 HYBRID",1289900,27667],
+["YAMAHA","MT 15 VERSION 2.0",1479900,30687],
+["YAMAHA","N MAX",1589900,32436],
+["YAMAHA","R 15 VERSION 4.0F1",1654900,33470],
+["TVS","NTORQ - DISH FI",759000,19229],
+["TVS","NTORQ - RACE EDITION",799000,19864],
+["TVS","NTORQ - XP",849000,20660],
+["TVS","NTORQ-DRUM",699000,18291],
+["TVS","NTORQ - DISH CARB",699000,18291],
+["TVS","JUPITOR",724000,18672],
+["TVS","SPORT 110",629000,18032],
+["TVS","RIDER",709000,18434],
+["TVS","XL 100",419000,13805],
+["TVS","APACHE 160",909000,21613],
+["TVS","APACHE 160 4V",969000,22567],
+["TVS","APACHE 200 4V",1115000,24888],
+["TVS","IQUBE 3.5KWH",849000,35278],
+["TVS","OBITA / EV",599000,27032],
+["TVS","APACHE 310 RTR",2250000,42929],
+["TVS","APACHE 310 RR",2300000,43723],
+["TVS","RONIN 225",1499000,30992],
+["HERO","DELUXE HF 100",585400,17154],
+["HERO","XOOM COMBAT",724900,18687],
+["HERO","XOOM 110 EFI",720900,18623],
+["HERO","XOOM 125",834900,20436],
+["HERO","XTREME",784400,19632],
+["HERO","HUNK 160R",917400,21747],
+["YADEA","T5 L",549950,25414],
+["YADEA","RUBIN S",399950,20467],
+["YADEA","RUBIN L",459950,22446],
+["YADEA","M 6",429950,21457],
+["YADEA","EPOC",664950,29207],
+["YADEA","COOLJOY",254950,15684],
+["SENARO","GN 125",695900,19378],
+["SENARO","DAYUN BOXTER",597900,17406],
+["SENARO","CLICK 150",895900,21405],
+["RANO MOTO","HUNTER",848000,20644],
+["RANO MOTO","HUNTER DL",998000,23028],
+["RANO MOTO","ACTIVE 100 (SRI LANKAN)",498000,17212],
+["RANO MOTO","MOPED SUPER (LT)",498000,17212],
+["RANO MOTO","MOPED SUPER",428000,15803],
+["RANO MOTO","MOPED SUPER (SRI LANKAN)",328000,13790],
+["RANO MOTO","GN 125 H",888000,21280],
+["RANO MOTO","GN 125",628000,19829],
+["RANO MOTO","GN 125 SP",998000,23028],
+["RANO MOTO","FLASH (CHINA)",748000,19054],
+["RANO MOTO","FLASH (SRI LANKAN)",498000,17212],
+["RANO MOTO","FLASH DLX",798000,19849],
+["SUZUKI","AVENIS",769900,19402],
+["SUZUKI","BURGMAN",874900,21071],
+["BAJAJ","CT ES 100",599950,19263],
+["BAJAJ","DISCOVER 125",729950,18767],
+["BAJAJ","CHETAK 3503",699950,30362],
+["BAJAJ","PLATINA 100 ES",639950,20069],
+["BAJAJ","PULSAR NS 125",789950,19816],
+["BAJAJ","PULSAR N 125",744950,19006],
+["BAJAJ","PULSAR N160",894950,21390],
+["BAJAJ","PULSAR N160 PREMIUM",979950,22741],
+["BAJAJ","PULSAR NS 200",1124950,25046],
+["BAJAJ","PULSAR RS 200",1239950,26873],
+["BAJAJ","PULSAR NS 400Z",2339950,44358],
+["BAJAJ","KTM DUKE 160",1489950,29417],
+["BAJAJ","KTM DUKE 250",1834950,35377],
+["BAJAJ","KTM ADVENTURE 390X",2799950,51670],
+["BAJAJ","KTM ADVENTURE 390R",3049950,null],
+["I'MA","MANA",524900,24588],
+["I'MA","LIBERTY",439900,21785],
+["I'MA","LIBERTY ULTRA",499900,23764],
+["I'MA","BREEZY",384900,19970],
+["I'MA","ARIA",349900,18815],
+["I'MA","MAWARIK",574900,26338],
+["HONDA","DIO STD - 110",690000,21076],
+["HONDA","DIO DLX - 110",740000,18927],
+["HONDA","DIO STD - 125",790000,19722],
+["HONDA","DIO DLX - 125",840000,20517],
+["HONDA","SP 125",770000,19404],
+["HONDA","SHINE 125",715000,18529],
+["TMR","COLA 5",274500,null],
+["TMR","N 09",449500,null],
+["TMR","ZL PLUS",534500,null],
+["TMR","MNK 3 PLUS",544500,null],
+["TMR","MQQ 6",399500,null],
+["TMR","S 18",449500,null],
+["TMR","XGW",344500,null],
+["TMR","G 18 PLUS",549500,null],
+["TMR","MYC PLUS",444500,null],
+["TMR","G 18",519500,null],
+["DYNO","DRV 125 EFI",695000,21177],
+["DYNO","VORTEX",1090000,24490],
+["SOOBOO","PARIS",330000,null],
+["SOOBOO","T 33",395000,null],
+["SOOBOO","GT",445000,null],
+["SOOBOO","TANK",515000,null],
+["SOOBOO","KB 1",382500,null],
+["SOOBOO","EX008",495000,null],
+["SOOBOO","T16",470000,null],
+["HUAIHAI BY KAPLA","XYS1 MINI BIKE",229900,null],
+["HUAIHAI BY KAPLA","SCOOTER ZL 9",389900,null]
 ];
-
-const INV=[1207900,1260900,1445900,1496900,1872900,2098900,2152900,2257900,2589900,2896900,1342900,1413900,1499000,1235900,1235900,1282000,1112900,1253900,730900,1607900,1712900,1971900,1502900,1056900,3974900,4038000,2627900,1024500,1268900,1261900,1461900,1372900,1605900,899950,710950,799950,739950,1154950,440950,1248900,1097900,1395900,1048000,1198000,650000,650000,540000,420000,1195000,760000,1298000,880000,610000,1015000,1140900,659950,759950,856950,699950,855950,794950,974950,999950,1164950,1299950,2339950,1489950,1834950,2799950,524900,439900,769900,384900,349900,574900,690000,740000,790000,840000,770000,715000,274500,449500,839500,859500,399500,449500,344500,899900,699900,519500,695000,1090000,617000,699000,800000,950000,730000,920000,890000,229900,389900];
-
-const PINS=[22932,23596,26029,26709,31628,34585,35301,36672,41004,45014,24514,25433,26584,23131,null,23728,21540,23364,16600,27942,29299,32649,47014,35206,58554,59371,41134,20479,23727,23636,26248,25084,28136,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];
 
 const $=id=>document.getElementById(id);
 const f=n=>"Rs. "+(Math.round(n*100)/100).toLocaleString("en-LK",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -981,6 +1004,8 @@ const v=id=>parseFloat($(id).value)||0;
 
 const RMV_DEF={TVS:11000,BAJAJ:10160};
 const PRO_DEF=6000;
+const EXPO_PCT=40, DP_PCT=60;   // Max exposure = 40% of bike price, Min DP = 60%
+let introMode=null;            // null = typed amount, otherwise 0 / 3 / 4 (% of bike price)
 
 lucide.createIcons();
 
@@ -1096,8 +1121,9 @@ function fillModels(){
 
 function setIns(){
   if(!$("model").value) return;
-  const p=PINS[$("model").value];
+  const p=MODELS[$("model").value][3];
   $("ins").value=p==null?"":p;
+  applyIntro();
   calc();
 }
 
@@ -1116,12 +1142,11 @@ for(let m=1; m<=11; m++) $("mo").add(new Option(m+" Month"+(m>1?"s":""), m));
 
 function calc(){
   if(!$("model").value) return;
-  const m=MODELS[$("model").value], price=m[2], maxLoan=m[3];
-  const ltv=maxLoan/price*100;
-  const minDp=m[4];
+  const m=MODELS[$("model").value], price=m[2];
+  const maxLoan=Math.round(price*EXPO_PCT)/100;   // 40% of bike price
+  const minDp=Math.round(price*DP_PCT)/100;       // 60% of bike price
 
   $("price").textContent=f(price);
-  $("inv").textContent=f(INV[$("model").value]);
   $("ltv").textContent=f(maxLoan);
   $("mindp-badge").textContent=f(minDp);
 
@@ -1145,14 +1170,14 @@ function calc(){
   const pro=$("pro").checked?v("proa"):0;
   const rmv=$("rmv").checked?v("rmva"):0;
 
-  const maxIntr=Math.floor(INV[$("model").value]*0.04*100)/100;
-  $("intrl").textContent="Introducer Commission (4% Max = "+f(maxIntr)+")";
+  const maxIntr=Math.round(price*4)/100;
+  $("intrl").textContent="Introducer Commission (Max 4% of Bike Price = "+f(maxIntr)+")";
   $("intr").max=maxIntr;
 
   const im=$("intrmsg");
   if(v("intr")>maxIntr){
     $("intr").value=maxIntr;
-    im.textContent="Commission capped at 4% of New Invoice ("+f(maxIntr)+")";
+    im.textContent="Commission capped at 4% of Bike Price ("+f(maxIntr)+")";
     im.classList.remove("hidden");
   } else {
     im.classList.add("hidden");
@@ -1161,14 +1186,16 @@ function calc(){
   if(v("intr")<0) $("intr").value=0;
 
   const ins=v("ins"), intr=v("intr");
-  const ipct=intr/INV[$("model").value]*100;
+  const ipct=intr/price*100;
+  $("intr-pct").textContent=intr>0?"= "+(Math.round(ipct*100)/100)+"% of Bike Price":"";
+  updateIntroChips();
 
   const rm=$("ratemsg"), rt=v("rate");
   let rmsg="";
   if(ipct>=3.99){
-    if(rt<=26) rmsg="Commission is 4% of Invoice – Interest rate must exceed 26%";
-  } else if(ipct>=3){
-    if(rt<23) rmsg="Commission is "+(Math.round(ipct*100)/100)+"% of Invoice – Rate must be 23% or higher";
+    if(rt<26) rmsg="Commission is 4% of Bike Price – Interest rate must be 26% or higher";
+  } else if(ipct>=2.999){
+    if(rt<23) rmsg="Commission is "+(Math.round(ipct*100)/100)+"% of Bike Price – Rate must be 23% or higher";
   }
 
   if(rmsg) {
@@ -1192,9 +1219,7 @@ function calc(){
   $("r4").textContent=f(intr);
   $("r5").textContent=f(rmv);
   $("la").textContent=f(L);
-  const invV=INV[$("model").value];
-  $("ltv").textContent = f(L);
-  $("ltv-pct").textContent = invV>0 ? (L/invV*100).toFixed(2)+"%" : "–";
+  $("ltv-pct").textContent = price>0 ? (L/price*100).toFixed(2)+"%" : "–";
 
   const n=v("yr")*12+v("mo");
   const rate=v("rate")/100;
@@ -1220,12 +1245,34 @@ function calc(){
 
   $("bi").textContent = $("inst").textContent;
 
-  window.R={m,price,inv:INV[$("model").value],bn:$("bn").checked,dp,base,pro,ins,intr,rmv,L,rate:v("rate"),yr:v("yr"),mo:v("mo"),n,pay,insMiss};
+  window.R={m,price,bn:$("bn").checked,dp,base,pro,ins,intr,rmv,L,rate:v("rate"),yr:v("yr"),mo:v("mo"),n,pay,insMiss,rateErr:!!rmsg,maxLoan,minDp};
 }
+
+/* ==================== INTRODUCER 0 / 3% / 4% ==================== */
+function applyIntro(){
+  if(introMode===null || !$("model").value) return;
+  const price=MODELS[$("model").value][2];
+  $("intr").value=Math.round(price*introMode)/100;
+}
+function updateIntroChips(){
+  document.querySelectorAll("#intro-chips .intro-chip").forEach(b=>{
+    b.classList.toggle("active", introMode!==null && Number(b.dataset.p)===introMode);
+  });
+}
+document.querySelectorAll("#intro-chips .intro-chip").forEach(b=>{
+  b.addEventListener("click",()=>{
+    introMode=Number(b.dataset.p);
+    applyIntro();
+    if(introMode===4 && v("rate")<26) $("rate").value=26;   // 4% => rate must be 26% or higher
+    if(introMode===3 && v("rate")<23) $("rate").value=23;   // 3% => rate must be 23% or higher
+    calc();
+  });
+});
+$("intr").addEventListener("input",()=>{ introMode=null; });
 
 document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",calc));
 
-$("btn-dp-min").onclick = () => { $("dp").value = MODELS[$("model").value][4]; calc(); };
+$("btn-dp-min").onclick = () => { $("dp").value = Math.round(MODELS[$("model").value][2]*DP_PCT)/100; calc(); };
 
 $("pro").addEventListener("change",()=>{ $("proa").value=$("pro").checked?PRO_DEF:0; calc(); });
 $("rmv").addEventListener("change",()=>{ $("rmva").value=$("rmv").checked?(RMV_DEF[$("make").value]||0):0; calc(); });
@@ -1263,6 +1310,11 @@ function openSaveModal(){
   }
   if(R.n<=0){
     alert("Please select the lease tenure.");
+    return;
+  }
+  if(R.rateErr){
+    alert($("ratemsg-text").textContent);
+    $("rate").focus();
     return;
   }
   $("cerr").classList.add("hidden");
@@ -1356,8 +1408,7 @@ function makePDF(name, nic){
   row("Make", R.m[0]);
   row("Model", R.m[1]);
   row("Condition", R.bn?"Brand New":"Used");
-  row("New Invoice Value", f(R.inv));
-  row("Normal Price", f(R.price));
+  row("Bike Price", f(R.price));
   y+=3;
 
   sec("Lease Facilities & Fees Breakdown");
